@@ -19,14 +19,17 @@ def scan_user_account(uid: int):
                 "results": 100,
                 "page": counter}
         response = requests.post(api_url, data=json.dumps(data), headers=header)
-        results.extend(response.json()['results'])
+        try:
+            results.extend(response.json()['results'])
+        except requests.exceptions.JSONDecodeError:
+            print(f"JSON Decode Error at u{uid}")
         counter = counter + 1
+        time.sleep(1.6)
         if not response.json()['more']:
             break
-        time.sleep(1.6)
 
     for x, vn in enumerate(results):
-        title = vn["vn"]["title"]
+        title = str.replace(vn["vn"]["title"], '\'', '\'\'')
         vnid = int(vn["id"][1:])
         try:
             score = vn["vote"] / 10
@@ -38,6 +41,8 @@ def scan_user_account(uid: int):
             cur.execute(f"INSERT OR IGNORE INTO VisualNovels VALUES({vnid}, \"{title}\")")
         except sqlite3.OperationalError:
             cur.execute(f"INSERT OR IGNORE INTO VisualNovels VALUES({vnid}, \'{title}\')")
+        if score > 0:
+            cur.execute(f"INSERT OR IGNORE INTO Ratings VALUES({uid}, {vnid}, {score})")
         for lang in languages:
             cur.execute(f"INSERT OR IGNORE INTO VisualNovelLanguages VALUES({vnid}, \"{lang['lang']}\")")
         for platform in platforms:
@@ -61,7 +66,11 @@ def scan_user_account(uid: int):
         db.commit()
 
 
-os.remove("fetched.db")
+try:
+    #os.remove("fetched.db")
+    print("")
+except FileNotFoundError:
+    print("Creating new DB File")
 db = sqlite3.connect("fetched.db")
 cur = db.cursor()
 cur.execute(
@@ -76,10 +85,19 @@ cur.execute(
 cur.execute(
     "CREATE TABLE IF NOT EXISTS VisualNovelPlatforms (VNID INT NOT NULL, Platform VARCHAR(50) NOT NULL, UNIQUE(VNID, "
     "Platform));")
+cur.execute("CREATE TABLE IF NOT EXISTS Ratings (UID INT unsigned NOT NULL, VNID INT unsigned NOT NULL, "
+            "Score INT unsigned NOT NULL, UNIQUE(UID, VNID))")
 res = cur.execute("SELECT name FROM sqlite_master")
 
 api_url = "https://api.vndb.org/kana/ulist"
 header = {"Content-Type": "application/json"}
-for userid in range(2, 51):
-    scan_user_account(userid)
+for userid in range(14919, 245000):
+    while True:
+        try:
+            scan_user_account(userid)
+        except Exception as e:
+            print(e)
+            time.sleep(10)
+        break
+
 db.close()
