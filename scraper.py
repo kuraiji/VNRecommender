@@ -23,8 +23,9 @@ def scan_user_account(uid: int):
             results.extend(response.json()['results'])
         except requests.exceptions.JSONDecodeError:
             print(f"JSON Decode Error at u{uid}")
+            print(response)
         counter = counter + 1
-        time.sleep(1.6)
+        time.sleep(2)
         if not response.json()['more']:
             break
 
@@ -91,7 +92,7 @@ res = cur.execute("SELECT name FROM sqlite_master")
 
 api_url = "https://api.vndb.org/kana/ulist"
 header = {"Content-Type": "application/json"}
-for userid in range(14919, 245000):
+for userid in range(17331, 245000):
     while True:
         try:
             scan_user_account(userid)
