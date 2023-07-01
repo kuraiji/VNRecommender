@@ -1,29 +1,20 @@
-import * as React from 'react';
-import { CssBaseline } from '@mui/material';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { createTheme, ThemeProvider } from '@mui/material/styles'
 import './App.css';
+import { MantineProvider } from '@mantine/core';
+import LandingPage from './pages/LandingPage';
+import HeaderBar from './components/HeaderBar';
 
 function App() {
 
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
-
-  const theme = React.useMemo(
-    () => createTheme({
-        palette: {
-          mode: prefersDarkMode ? 'dark' : 'light',
-        },
-    }),
-    [prefersDarkMode]
-  );
+  
+  
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline enableColorScheme/>
-      {
-        
-      }
-    </ThemeProvider>
+    <MantineProvider withGlobalStyles withNormalizeCSS
+      theme={{colorScheme: 'dark'}}
+    >
+      <HeaderBar/>
+      <LandingPage/>
+    </MantineProvider>
   )
 }
 
