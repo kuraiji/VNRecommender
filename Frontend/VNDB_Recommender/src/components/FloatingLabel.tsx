@@ -50,6 +50,7 @@ export default function FloatingLabel() {
         onBlur={() => setFocused(false)}
         mt="md"
         autoComplete="nope"
+        w="35%"
       />
     );
 }
