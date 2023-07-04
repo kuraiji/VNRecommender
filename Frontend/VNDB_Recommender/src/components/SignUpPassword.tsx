@@ -2,6 +2,12 @@ import { Box, Progress, PasswordInput, Group, Text, Center } from '@mantine/core
 import { useInputState } from '@mantine/hooks';
 import { IconCheck, IconX } from "@tabler/icons-react"
 
+interface SignUpPasswordProps {
+    PasswordRef: React.MutableRefObject<string>,
+    OnSuccess: ()=>void,
+    OnFailure: ()=>void
+}
+
 const colors = {
     red: "#ff0000",
     yellow: "#FFFF00",
@@ -26,7 +32,7 @@ const requirements = [
     { re: /[$&+,:;=?@#|'<>.^*()%!-]/, label: 'Includes special symbol'}
 ];
 
-function getStrength(password: string) {
+function getStrength(password: string, OnSuccess: ()=>void, OnFailure: ()=>void) {
     let multiplier = password.length > 5 ? 0 : 1;
 
     requirements.forEach((requirement) => {
@@ -34,13 +40,14 @@ function getStrength(password: string) {
             multiplier += 1;
         }
     });
-
-    return Math.max(100 - (100 / (requirements.length + 1)) * multiplier, 0);
+    const result = Math.max(100 - (100 / (requirements.length + 1)) * multiplier, 0);
+    result > 80 ? OnSuccess() : OnFailure()
+    return result;
 }
 
-function SignUpPassword(){
+function SignUpPassword(props: SignUpPasswordProps){
     const [value, setValue] = useInputState('');
-    const strength = getStrength(value);
+    const strength = getStrength(value, props.OnSuccess, props.OnFailure);
     const checks = requirements.map((requirement, index) => (
         <PasswordRequirement key={index} label={requirement.label} meets={requirement.re.test(value)}/>
     ));
@@ -62,7 +69,10 @@ function SignUpPassword(){
         <div>
             <PasswordInput
                 value={value}
-                onChange={setValue}
+                onChange={(val)=>{
+                    setValue(val);
+                    props.PasswordRef.current = val.currentTarget.value;
+                }}
                 label="Password"
                 required
             />
