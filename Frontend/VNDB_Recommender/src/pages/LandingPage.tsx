@@ -3,6 +3,12 @@ import FloatingLabel from "../components/FloatingLabel";
 import MultiSelectLanguages from "../components/MultiSelectLanguages";
 import MultiSelectPlatforms from "../components/MultiSelectPlatforms";
 
+/**
+ * TODO:
+ *  Create Log In Pop Up Dialog Menu
+ *  Create Sign Up Pop Up Dialog Menu
+ */
+
 function LandingPage() {
     return (
         <Flex justify={"center"} direction={"column"} align={"center"}>

@@ -1,4 +1,6 @@
-import { Box, Group, Header, Text, Button, Divider, createStyles, rem } from "@mantine/core";
+import { Group, Header, Text, Button, createStyles, rem } from "@mantine/core";
+import ModalBase from "./ModalBase";
+import SignUpContents from "./SignUpContents";
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -30,8 +32,8 @@ export default function HeaderBar() {
                     Visual Novel Recommender
                 </Text>
                 <Group>
-                    <Button variant="default">Log in</Button>
-                    <Button>Sign up</Button>
+                    <ModalBase Contents={<></>} ButtonText="Log in" ButtonVariant="default"/>
+                    <ModalBase Contents={SignUpContents()} ButtonText="Sign up"/>
                 </Group>
             </div>
         </Header>

@@ -4,10 +4,6 @@ import LandingPage from './pages/LandingPage';
 import HeaderBar from './components/HeaderBar';
 
 function App() {
-
-  
-  
-
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS
       theme={{colorScheme: 'dark'}}
