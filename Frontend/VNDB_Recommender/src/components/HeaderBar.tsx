@@ -1,4 +1,4 @@
-import { Group, Header, Text, Button, createStyles, rem } from "@mantine/core";
+import { Group, Header, Text, createStyles, rem } from "@mantine/core";
 import ModalBase from "./ModalBase";
 import SignUpContents from "./SignUpContents";
 import LogInContents from "./LogInContents";

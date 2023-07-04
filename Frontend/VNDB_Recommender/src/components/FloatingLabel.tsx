@@ -1,6 +1,13 @@
 import { TextInput, createStyles, rem } from "@mantine/core";
 import { useState } from "react";
 
+interface FloatingLabelProps {
+    placeholder: string,
+    error: string,
+    value: string,
+    setValue: (val: string | React.ChangeEvent<any> | null | undefined) => void
+}
+
 const useStyles = createStyles((theme, {floating}: {floating: boolean}) => ({
     root: {
         position: 'relative',
@@ -32,25 +39,23 @@ const useStyles = createStyles((theme, {floating}: {floating: boolean}) => ({
     },
 }));
 
-export default function FloatingLabel() {
+export default function FloatingLabel(props: FloatingLabelProps) {
 
     const [focused, setFocused] = useState(false);
-    const [value, setValue] = useState('');
-    const { classes } = useStyles({ floating: value.trim().length !== 0 || focused });
+    const { classes } = useStyles({ floating: props.value.trim().length !== 0 || focused });
 
     return (
         <TextInput
         label="VNDB User ID"
-        placeholder="v1234"
+        placeholder={props.placeholder}
         required
         classNames={classes}
-        value={value}
-        onChange={(event) => setValue(event.currentTarget.value)}
+        value={props.value}
+        onChange={props.setValue}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        mt="md"
         autoComplete="nope"
-        w="35%"
+        error={props.error}
       />
     );
 }
