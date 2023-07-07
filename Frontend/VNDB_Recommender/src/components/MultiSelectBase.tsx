@@ -21,7 +21,7 @@ function MultiSelectBase(props : MultiSelectBaseProps) {
         clearable
         maxSelectedValues={5}
         transitionProps={{ duration: 150, transition: 'pop-top-left', timingFunction: 'ease' }}
-        disabled
+        
         />
     );
 }

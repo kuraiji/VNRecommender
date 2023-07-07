@@ -7,6 +7,11 @@ import json
 
 # TODO:
 # Work on Heatmap Algorithm
+# Expose Python to HTTPs Request
+# Create Python Backend based on Temp DB
+# Create Java Backend that connects to Python
+# Connect React to Java
+# Complete Minimum React Application
 
 def scan_user_account(uid: int):
     print(f"Now scanning the VNDB profile of u{uid}")
@@ -92,7 +97,7 @@ res = cur.execute("SELECT name FROM sqlite_master")
 
 api_url = "https://api.vndb.org/kana/ulist"
 header = {"Content-Type": "application/json"}
-for userid in range(148202, 245000):
+for userid in range(189542, 245000):
     while True:
         try:
             scan_user_account(userid)
