@@ -97,7 +97,7 @@ res = cur.execute("SELECT name FROM sqlite_master")
 
 api_url = "https://api.vndb.org/kana/ulist"
 header = {"Content-Type": "application/json"}
-for userid in range(210428, 245000):
+for userid in range(235628, 245000):
     while True:
         try:
             scan_user_account(userid)

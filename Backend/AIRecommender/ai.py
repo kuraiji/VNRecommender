@@ -1,4 +1,6 @@
 import sqlite3
+
+import pandas
 import pandas as pd
 from surprise import Dataset
 from surprise import Reader
@@ -23,57 +25,22 @@ from collections import defaultdict
 # 1.3808324020586962
 # {'n_epochs': 10, 'lr_all': 0.005, 'reg_all': 0.4}
 
-def get_top_n(predictions, n=10):
-    top_n = defaultdict(list)
-    for uid, iid, true_r, est, _ in predictions:
-        top_n[uid].append((iid, est))
-    for uid, user_ratings in top_n.items():
-        user_ratings.sort(key=lambda x: x[1], reverse=True)
-        top_n[uid] = user_ratings[:n]
-    return top_n
+def train():
 
 
 def recommend_novels(user_id: int, language_filters: list[str] = None, platform_filters: list[str] = None):
     db = sqlite3.connect("../../dump/fetched2.db")
 
-    list_of_vns = pd.read_sql_query("SELECT VNID FROM VisualNovels", db)
-    list_of_read_vns = pd.read_sql_query(f"SELECT VNID FROM Ratings WHERE UID == {user_id}", db)
+    list_of_vns = pd.read_sql_query(
+        "SELECT * FROM VisualNovels LEFT JOIN VisualNovelLanguages ON VisualNovels.VNID=VisualNovelLanguages.VNID "
+        "LEFT JOIN VisualNovelPlatforms ON VisualNovels.VNID=VisualNovelPlatforms.VNID", db)
 
-    request = "SELECT DISTINCT VisualNovels.VNID FROM VisualNovels LEFT JOIN VisualNovelPlatforms ON VisualNovels.VNID = " \
-              "VisualNovelPlatforms.VNID LEFT JOIN VisualNovelLanguages ON VisualNovels.VNID = " \
-              "VisualNovelLanguages.VNID"
-
-    #TODO: Fix Table
-
-    if language_filters is not None or platform_filters is not None:
-        request += " WHERE"
-        lan_added = False
-        if len(language_filters) > 0:
-            lan_added = True
-            once = False
-            request += " Language ="
-            for lan_filter in language_filters:
-                if once:
-                    request += " OR Language ="
-                request += f" \"{lan_filter}\""
-                once = True
-        if len(platform_filters) > 0:
-            if lan_added:
-                request += " AND"
-            request += " Platform ="
-            once = False
-            for plat_filter in platform_filters:
-                if once:
-                    request += " OR Platform ="
-                request += f" \"{plat_filter}\""
-                once = True
-
-    filtered_vn_list = pd.read_sql_query(request, db)
-    print(request)
-    print(filtered_vn_list)
-
-    list_of_unread_vns = list_of_vns.merge(list_of_read_vns.drop_duplicates(), on=['VNID'], how='left', indicator=True)
-    list_of_unread_vns = list_of_unread_vns[list_of_unread_vns['_merge'] == 'left_only']["VNID"]
+    filtered_list_of_vns = list_of_vns
+    if platform_filters is not None:
+        filtered_list_of_vns = filtered_list_of_vns[filtered_list_of_vns["Platform"].isin(platform_filters)]
+    if language_filters is not None:
+        filtered_list_of_vns = filtered_list_of_vns[filtered_list_of_vns["Language"].isin(language_filters)]
+    filtered_list_of_vns = filtered_list_of_vns.iloc[:, 0].drop_duplicates()
 
     df = pd.read_sql_query("SELECT * FROM Ratings", db)
     reader = Reader(rating_scale=(1, 10))
@@ -84,7 +51,7 @@ def recommend_novels(user_id: int, language_filters: list[str] = None, platform_
 
     dictionary = dict()
 
-    for index, row in list_of_unread_vns.items():
+    for index, row in filtered_list_of_vns.items():
         prediction = algo.predict(user_id, row)
         dictionary[row] = prediction.est
 
@@ -93,7 +60,8 @@ def recommend_novels(user_id: int, language_filters: list[str] = None, platform_
     return top_results
 
 
-recommend_novels(2, ["en", "jp"], ["ps5"])
+results = recommend_novels(2, ["ja"], ["win"])
+print(results)
 
 # "SELECT DISTINCT * "
 # "FROM VisualNovels "
@@ -102,3 +70,8 @@ recommend_novels(2, ["en", "jp"], ["ps5"])
 #    "LEFT JOIN VisualNovelLanguages "
 #     "ON VisualNovels.VNID = VisualNovelLanguages.VNID "
 #     "WHERE Language = \"en\" AND Platform = \"win\""
+# list_of_vns = pd.read_sql_query("SELECT VNID FROM VisualNovels", db)
+# list_of_read_vns = pd.read_sql_query(f"SELECT VNID FROM Ratings WHERE UID == {user_id}", db)
+# list_of_unread_vns = list_of_vns.merge(list_of_read_vns.drop_duplicates(), on=['VNID'], how='left', indicator=True)
+# list_of_unread_vns = list_of_unread_vns[list_of_unread_vns['_merge'] == 'left_only']["VNID"]
+# test = list_of_vns[list_of_vns["Platform"].isin(platform_filters)][list_of_vns["Language"].isin(language_filters)].iloc[:, 0].drop_duplicates().sort_values()
