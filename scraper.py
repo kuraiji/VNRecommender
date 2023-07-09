@@ -6,7 +6,6 @@ import json
 
 
 # TODO:
-# Work on Heatmap Algorithm
 # Expose Python to HTTPs Request
 # Create Python Backend based on Temp DB
 # Create Java Backend that connects to Python
@@ -21,7 +20,7 @@ def scan_user_account(uid: int):
         data = {"user": f"u{uid}",
                 "fields": "id, vote, vn.title, labels.label, vn.titles.lang, vn.platforms",
                 "sort": "id",
-                "results": 100,
+                "results": 75,
                 "page": counter}
         response = requests.post(api_url, data=json.dumps(data), headers=header)
         try:
@@ -30,7 +29,7 @@ def scan_user_account(uid: int):
             print(f"JSON Decode Error at u{uid}")
             print(response)
         counter = counter + 1
-        time.sleep(2)
+        time.sleep(4)
         if not response.json()['more']:
             break
 
@@ -97,7 +96,7 @@ res = cur.execute("SELECT name FROM sqlite_master")
 
 api_url = "https://api.vndb.org/kana/ulist"
 header = {"Content-Type": "application/json"}
-for userid in range(235628, 245000):
+for userid in [17124, 14919, 236735]:
     while True:
         try:
             scan_user_account(userid)
