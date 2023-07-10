@@ -1,5 +1,6 @@
 package com.kuraiji.VNRecommender;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,17 +13,14 @@ import java.util.List;
 
 @RestController
 public class MainController {
-
     @GetMapping("/recommend")
     public String recommend(
             @RequestParam(value = "userid") int userid,
             @RequestParam(value = "language_filters", required = false) List<String> language_filters,
             @RequestParam(value = "platform_filters", required = false) List<String> platform_filters
-            ) throws IOException, URISyntaxException, Exception {
-        System.out.print(userid);
-        System.out.print(language_filters);
-        System.out.print(platform_filters);
+            ) throws Exception {
 
+        String JSON = "";
         StringBuilder url = new StringBuilder("http://0.0.0.0:8000/recommend/");
         url.append("?userid=").append(userid);
         if(language_filters != null) {
@@ -45,9 +43,9 @@ public class MainController {
         BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
         String input;
         while ((input = reader.readLine()) != null) {
-            System.out.println(input);
+            JSON = input;
         }
 
-        return "Poo";
+        return JSON;
     }
 }

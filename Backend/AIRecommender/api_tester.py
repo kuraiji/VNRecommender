@@ -10,4 +10,4 @@ payload = {
 }
 
 response = requests.request("GET", url2, headers={}, params=payload)
-#print(response.json())
+print(response.json())

@@ -8,7 +8,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent
 MODEL_NAME = "Model.joblib"
-
+DB_LOCATION = "../../fetched.db"
 
 def train(db: sqlite3.Connection) -> SVDpp:
     df = pd.read_sql_query("SELECT * FROM Ratings", db)
@@ -47,8 +47,8 @@ def recommend(db: sqlite3.Connection, user_id: int,
 
 
 if __name__ == "__main__":
-    database = sqlite3.connect("../../dump/fetched2.db")
-    #model = train(database)
+    database = sqlite3.connect(DB_LOCATION)
+    model = train(database)
     results = recommend(database, 2, ["ja"], ["win"])
     print(results)
     database.close()
