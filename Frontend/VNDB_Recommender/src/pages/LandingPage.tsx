@@ -3,12 +3,16 @@ import { useInputState } from "@mantine/hooks";
 import FloatingLabel from "../components/FloatingLabel";
 import MultiSelectLanguages from "../components/MultiSelectLanguages";
 import MultiSelectPlatforms from "../components/MultiSelectPlatforms";
+import { GetRecommendations } from "../api/main";
 
 function OnStart(val: string, errorCallback: ()=>void, unerrorCallback: ()=>void): void {
     if(/u([0-9]){0,7}\w/.test(val)) {
-
+        console.log(val);
         unerrorCallback();
-        console.log(val)
+        GetRecommendations({userid: 2, language_filters: ["en"], platform_filters: ["win"]}).then((res)=>{
+            console.log(res);
+        })
+        
     }
     else {
         errorCallback();
