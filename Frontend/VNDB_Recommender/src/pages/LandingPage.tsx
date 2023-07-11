@@ -5,11 +5,11 @@ import MultiSelectLanguages from "../components/MultiSelectLanguages";
 import MultiSelectPlatforms from "../components/MultiSelectPlatforms";
 import { GetRecommendations } from "../api/main";
 
-function OnStart(val: string, errorCallback: ()=>void, unerrorCallback: ()=>void): void {
+function OnStart(val: string, lan_filters: string[], plat_filters: string[], 
+    errorCallback: ()=>void, unerrorCallback: ()=>void): void {
     if(/u([0-9]){0,7}\w/.test(val)) {
-        console.log(val);
         unerrorCallback();
-        GetRecommendations({userid: 2, language_filters: ["en"], platform_filters: ["win"]}).then((res)=>{
+        GetRecommendations({userid: 2, language_filters: lan_filters, platform_filters: plat_filters}).then((res)=>{
             console.log(res);
         })
         
@@ -24,6 +24,8 @@ function LandingPage() {
     const [placeholderValue, setPlaceholderValue] = useInputState('u1234')
     const [errorValue, setErrorValue] = useInputState('')
     const [buttonPadding, setButtonPadding] = useInputState("0")
+    const [lanFilters, setLanFilters] = useInputState(new Array<string>)
+    const [platFilters, setPlatFilters] = useInputState(new Array<string>)
 
     const OnError = () => {
         setPlaceholderValue("");
@@ -47,7 +49,7 @@ function LandingPage() {
                     error={errorValue}
                 />
                 <Button 
-                    onClick={()=>{OnStart(searchValue, OnError, OnUnerror)}}
+                    onClick={()=>{OnStart(searchValue, lanFilters, platFilters, OnError, OnUnerror)}}
                     mb={buttonPadding}
                     variant="gradient"
                     gradient={{from: 'aqua', to: 'aquamarine', deg: 143}}
@@ -65,8 +67,12 @@ function LandingPage() {
                 <Text span c="aquamarine"> please create an account</Text>.
             </Text>
             <Flex gap="md">
-                <MultiSelectLanguages/>
-                <MultiSelectPlatforms/>
+                <MultiSelectLanguages 
+                    onValueChanged={(language_filters)=>{setLanFilters(language_filters)}}
+                />
+                <MultiSelectPlatforms
+                    onValueChanged={(platform_filters)=>{setPlatFilters(platform_filters)}}
+                />
             </Flex>
         </Flex>
     );

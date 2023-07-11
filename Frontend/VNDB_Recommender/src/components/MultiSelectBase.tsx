@@ -4,7 +4,8 @@ import { useState } from "react";
 interface MultiSelectBaseProps {
     data: {value: string, label: string}[],
     label: string,
-    nothingFound: string
+    nothingFound: string,
+    onValueChanged: (val: string[])=>void
 }
 
 function MultiSelectBase(props : MultiSelectBaseProps) {
@@ -21,7 +22,7 @@ function MultiSelectBase(props : MultiSelectBaseProps) {
         clearable
         maxSelectedValues={5}
         transitionProps={{ duration: 150, transition: 'pop-top-left', timingFunction: 'ease' }}
-        
+        onChange={props.onValueChanged}
         />
     );
 }

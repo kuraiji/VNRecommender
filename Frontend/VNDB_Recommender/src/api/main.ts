@@ -13,6 +13,7 @@ export async function GetRecommendations(props: GetRecommendationsProps) : Promi
         platform_filters: props.platform_filters.toString()
     }
     const response = await fetch(API_URL + new URLSearchParams(params));
+    console.log(response)
     const data = await response.json();
     console.log(data)
     return data;
