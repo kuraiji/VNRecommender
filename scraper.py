@@ -5,13 +5,6 @@ import requests
 import json
 
 
-# TODO:
-# Expose Python to HTTPs Request
-# Create Python Backend based on Temp DB
-# Create Java Backend that connects to Python
-# Connect React to Java
-# Complete Minimum React Application
-
 def scan_user_account(uid: int):
     print(f"Now scanning the VNDB profile of u{uid}")
     results = []
