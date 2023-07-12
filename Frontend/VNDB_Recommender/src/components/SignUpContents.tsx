@@ -1,13 +1,14 @@
 import { Button, Flex, TextInput, PasswordInput } from '@mantine/core'
-import { useDisclosure } from "@mantine/hooks";
 import { useForm } from '@mantine/form'
 import SignUpPassword from './SignUpPassword';
-import { useRef } from 'react';
+import { useState } from 'react';
+import { createUserWithEmailAndPassword } from "firebase/auth"
+import { auth } from '../api/firebase';
 
 function SignUpContents() {
 
-    const [disable, {open, close}] = useDisclosure(true);
-    const passwordRef = useRef('');
+    const [password, setPassword] = useState("");
+    const [disabled, setDisabled] = useState(true)
 
     const form = useForm({
         initialValues: {
@@ -16,12 +17,24 @@ function SignUpContents() {
         },
         validate: {
             email : (value) => (/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value) ? null : 'Invalid Email'),
-            confirm_password: (value) => (value !== passwordRef.current ? 'Passwords did not match' : null),
+            confirm_password: (value) => (value !== password ? 'Passwords did not match' : null),
         },
     });
 
+    function SignUpUser() {
+        createUserWithEmailAndPassword(auth, form.getInputProps('email').value, 
+            form.getInputProps('confirm_password').value).then((userCredential) => {
+            //Signed in
+            const user = userCredential.user;
+            console.log(user);
+        })
+        .catch((error) => {
+            console.log(error.code, error.message);
+        });
+    }
+
     return (
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <form onSubmit={SignUpUser}>
             <Flex direction="column" gap="xl">
                     <TextInput 
                         label="Email"
@@ -29,13 +42,13 @@ function SignUpContents() {
                         required
                         {...form.getInputProps('email')}
                     />
-                    <SignUpPassword OnSuccess={close} OnFailure={open} PasswordRef={passwordRef}/>
+                    <SignUpPassword PasswordCallback={setPassword} DisabledCallback={setDisabled}/>
                     <PasswordInput
                         label="Confirm Password"
                         required
                         {...form.getInputProps('confirm_password')}
                     />
-                    <Button disabled={disable} type='submit'>Create Account</Button>
+                    <Button disabled={disabled} type='submit'>Create Account</Button>
                 </Flex>
             </form>
     )

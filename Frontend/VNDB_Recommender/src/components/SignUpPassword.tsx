@@ -1,11 +1,11 @@
 import { Box, Progress, PasswordInput, Group, Text, Center } from '@mantine/core'
 import { useInputState } from '@mantine/hooks';
 import { IconCheck, IconX } from "@tabler/icons-react"
+import { useEffect } from 'react';
 
 interface SignUpPasswordProps {
-    PasswordRef: React.MutableRefObject<string>,
-    OnSuccess: ()=>void,
-    OnFailure: ()=>void
+    PasswordCallback: React.Dispatch<React.SetStateAction<string>>,
+    DisabledCallback: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const colors = {
@@ -32,7 +32,7 @@ const requirements = [
     { re: /[$&+,:;=?@#|'<>.^*()%!-]/, label: 'Includes special symbol'}
 ];
 
-function getStrength(password: string, OnSuccess: ()=>void, OnFailure: ()=>void) {
+function getStrength(password: string) {
     let multiplier = password.length > 5 ? 0 : 1;
 
     requirements.forEach((requirement) => {
@@ -41,13 +41,17 @@ function getStrength(password: string, OnSuccess: ()=>void, OnFailure: ()=>void)
         }
     });
     const result = Math.max(100 - (100 / (requirements.length + 1)) * multiplier, 0);
-    result > 80 ? OnSuccess() : OnFailure()
     return result;
 }
 
 function SignUpPassword(props: SignUpPasswordProps){
     const [value, setValue] = useInputState('');
-    const strength = getStrength(value, props.OnSuccess, props.OnFailure);
+    const strength = getStrength(value);
+
+    useEffect(()=>{
+        props.DisabledCallback(getStrength(value) <= 80)
+    },[value, props])
+    
     const checks = requirements.map((requirement, index) => (
         <PasswordRequirement key={index} label={requirement.label} meets={requirement.re.test(value)}/>
     ));
@@ -71,7 +75,7 @@ function SignUpPassword(props: SignUpPasswordProps){
                 value={value}
                 onChange={(val)=>{
                     setValue(val);
-                    props.PasswordRef.current = val.currentTarget.value;
+                    props.PasswordCallback(val.currentTarget.value);
                 }}
                 label="Password"
                 required
