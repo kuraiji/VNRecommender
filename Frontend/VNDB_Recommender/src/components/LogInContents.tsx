@@ -1,7 +1,13 @@
 import { Button, Flex, TextInput, PasswordInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../api/firebase';
 
-function LogInContents() {
+export interface LogInContentsProps {
+    CloseCallback: ()=>void
+}
+
+function LogInContents(props: LogInContentsProps) {
 
     const form = useForm({
         initialValues: {
@@ -10,11 +16,21 @@ function LogInContents() {
         },
         validate: {
             email : (value) => (/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value) ? null : 'Invalid Email'),
+            password : (value) => (value ? null : "Password Missing")
         },
     });
 
+    const isDisabled = !(form.getInputProps("email").value && form.getInputProps("password").value);
+
+    async function LogInUser() {
+        const userCredential = await signInWithEmailAndPassword(auth, form.getInputProps("email").value, 
+            form.getInputProps("password").value);
+        console.log(userCredential);
+        props.CloseCallback();
+    }
+
     return (
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <form>
             <Flex direction="column" gap="xl">
                     <TextInput 
                         label="Email"
@@ -27,7 +43,7 @@ function LogInContents() {
                         required
                         {...form.getInputProps('password')}
                     />
-                    <Button type='submit'>Log In</Button>
+                    <Button disabled={isDisabled} onClick={LogInUser}>Log In</Button>
                 </Flex>
             </form>
     )

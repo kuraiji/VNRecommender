@@ -33,8 +33,8 @@ export default function HeaderBar() {
                     Visual Novel Recommender
                 </Text>
                 <Group>
-                    <ModalBase Contents={LogInContents()} ButtonText="Log in" ButtonVariant="default"/>
-                    <ModalBase Contents={SignUpContents()} ButtonText="Sign up"/>
+                    <ModalBase Contents={LogInContents} ButtonText="Log in" ButtonVariant="default"/>
+                    <ModalBase Contents={SignUpContents} ButtonText="Sign up"/>
                 </Group>
             </div>
         </Header>

@@ -2,11 +2,14 @@ import { Button, Flex, TextInput, PasswordInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import SignUpPassword from './SignUpPassword';
 import { useState } from 'react';
-import { createUserWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth"
 import { auth } from '../api/firebase';
 
-function SignUpContents() {
+export interface SignUpContentsProps {
+    CloseCallback: ()=>void
+}
 
+function SignUpContents(props : SignUpContentsProps) {
     const [password, setPassword] = useState("");
     const [disabled, setDisabled] = useState(true)
 
@@ -21,20 +24,18 @@ function SignUpContents() {
         },
     });
 
-    function SignUpUser() {
-        createUserWithEmailAndPassword(auth, form.getInputProps('email').value, 
-            form.getInputProps('confirm_password').value).then((userCredential) => {
-            //Signed in
-            const user = userCredential.user;
-            console.log(user);
-        })
-        .catch((error) => {
-            console.log(error.code, error.message);
-        });
+    const isDisabled = !(form.getInputProps("email").value && 
+        form.getInputProps("confirm_password").value === password);
+
+    async function SignUpUser() {
+        const userCredential = await createUserWithEmailAndPassword(auth, form.getInputProps('email').value, form.getInputProps('confirm_password').value);
+        const user = userCredential.user;
+        const verification = await sendEmailVerification(user);
+        props.CloseCallback();
     }
 
     return (
-        <form onSubmit={SignUpUser}>
+        <form>
             <Flex direction="column" gap="xl">
                     <TextInput 
                         label="Email"
@@ -48,7 +49,7 @@ function SignUpContents() {
                         required
                         {...form.getInputProps('confirm_password')}
                     />
-                    <Button disabled={disabled} type='submit'>Create Account</Button>
+                    <Button onClick={SignUpUser} disabled={disabled || isDisabled}>Create Account</Button>
                 </Flex>
             </form>
     )
