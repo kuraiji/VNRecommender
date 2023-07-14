@@ -1,7 +1,14 @@
-import { Group, Header, Text, createStyles, rem } from "@mantine/core";
+import { Group, Header, Portal, Text, createStyles, rem, keyframes } from "@mantine/core";
 import ModalBase from "./ModalBase";
 import SignUpContents from "./SignUpContents";
 import LogInContents from "./LogInContents";
+import NotificationBase from "./NotificationBase";
+
+const slide = keyframes({
+    'from': {right: "-23rem"},
+    '75%': {right: "5rem"},
+    'to': {right:"2rem"}
+})
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -14,6 +21,16 @@ const useStyles = createStyles((theme) => ({
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center'
+    },
+    portal: {
+        position: "absolute", 
+        zIndex: 1, 
+        maxWidth: "30%",
+        bottom:"20rem",
+    },
+    portalAnimation:{
+        animation: `${slide} 1s ease-in-out`,
+        animationFillMode: "forwards"
     }
 }))
 
@@ -36,6 +53,9 @@ export default function HeaderBar() {
                     <ModalBase Contents={LogInContents} ButtonText="Log in" ButtonVariant="default"/>
                     <ModalBase Contents={SignUpContents} ButtonText="Sign up"/>
                 </Group>
+                <Portal className={`${classes.portal} ${classes.portalAnimation}`}>
+                    <NotificationBase/>
+                </Portal>
             </div>
         </Header>
     )
