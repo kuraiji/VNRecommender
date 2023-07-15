@@ -1,6 +1,6 @@
-import { Button, Flex, TextInput, PasswordInput, LoadingOverlay } from '@mantine/core'
+import { Button, Flex, TextInput, PasswordInput, LoadingOverlay, Text, UnstyledButton } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { AuthErrorCodes, UserCredential, signInWithEmailAndPassword } from 'firebase/auth';
+import { AuthErrorCodes, UserCredential, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { FirebaseError, auth } from '../api/firebase';
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
@@ -27,6 +27,28 @@ function LogInContents(props: LogInContentsProps) {
     });
 
     const isDisabled = !(form.getInputProps("email").value && form.getInputProps("password").value);
+
+    async function ForgotPassword() {
+        setEmailError("");
+        open();
+        try {
+            await sendPasswordResetEmail(auth, form.getInputProps("email").value);
+        } catch (error) {
+            const firebaseError = error as FirebaseError;
+            switch(firebaseError.code) {
+                case AuthErrorCodes.INVALID_EMAIL:
+                    setEmailError("Invalid Email Address");
+                    break;
+                case AuthErrorCodes.USER_DELETED:
+                    setEmailError("Account doesn't exist");
+                    break;
+            }
+            close();
+            return;
+        }
+        close();
+        return;
+    }
 
     async function LogInUser() {
         setEmailError("");
@@ -80,6 +102,11 @@ function LogInContents(props: LogInContentsProps) {
                         {...form.getInputProps('password')}
                         error={passwordError}
                     />
+                    <Flex>
+                        <UnstyledButton onClick={ForgotPassword}>
+                            <Text color='blue'>Forgot Password?</Text>
+                        </UnstyledButton>
+                    </Flex>
                     <Button disabled={isDisabled} onClick={LogInUser}>Log In</Button>
                 </Flex>
             </form>

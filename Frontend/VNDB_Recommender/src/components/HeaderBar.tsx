@@ -1,4 +1,4 @@
-import { Group, Header, Portal, Text, createStyles, rem, keyframes, Center, Avatar } from "@mantine/core";
+import { Group, Header, Portal, Text, createStyles, rem, keyframes, Center, Avatar, UnstyledButton } from "@mantine/core";
 import ModalBase from "./ModalBase";
 import SignUpContents from "./SignUpContents";
 import LogInContents from "./LogInContents";
@@ -6,6 +6,7 @@ import NotificationBase from "./NotificationBase";
 import { useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../api/firebase";
+import UserMenu from "./UserMenu";
 
 const slide = keyframes({
     'from': {right: "-23rem"},
@@ -30,11 +31,14 @@ const useStyles = createStyles((theme) => ({
         zIndex: 1, 
         right: "-23rem",
         maxWidth: "30%",
-        bottom:"20rem",
+        bottom:"20rem"
     },
     portalAnimation:{
         animation: `${slide} 1s ease-in-out`,
         animationFillMode: "forwards"
+    },
+    hide: {
+        display:"none"
     }
 }))
 
@@ -63,15 +67,21 @@ export default function HeaderBar() {
                 >
                     Visual Novel Recommender
                 </Text>
-                <Group sx={{visibility: loggedIn ? "hidden" : "visible"}}>
+                <Group sx={{display: loggedIn ? "none" : "visible"}}>
                     <ModalBase Contents={LogInContents} ButtonText="Log in" ButtonVariant="default"/>
-                    <ModalBase Contents={SignUpContents} ButtonText="Sign up" OptionalCallback={()=>{setAnimClass(classes.portalAnimation)}}/>
+                    <ModalBase Contents={SignUpContents} ButtonText="Sign up" 
+                        OptionalCallback={()=>{setAnimClass(classes.portalAnimation)}}
+                    />
                 </Group>
-                <Center sx={{visibility: loggedIn ? "visible" : "hidden"}}>
-                    <Avatar radius="xl" variant="gradient" gradient={{from: 'aqua', to: 'aquamarine', deg: 143}}/>
+                <Center sx={{display: loggedIn ? "visible" : "none"}}>
+                    <UserMenu/>
                 </Center>
-                <Portal className={`${classes.portal} ${animClass}`}>
-                    <NotificationBase CloseCallback={()=>{setAnimClass("");}}/>
+                <Portal className={`${classes.portal} ${animClass} ${animClass === "" ? classes.hide : ""}`}>
+                    <NotificationBase 
+                        CloseCallback={()=>{setAnimClass("");}}
+                        Header="Account creation successful!"
+                        Body="Please verify your email before logging in."
+                    />
                 </Portal>
             </div>
         </Header>

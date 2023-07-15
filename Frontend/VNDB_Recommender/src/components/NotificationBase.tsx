@@ -2,7 +2,9 @@ import { Notification } from '@mantine/core';
 import { IconCheck } from '@tabler/icons-react';
 
 interface NotificationBaseProps {
-    CloseCallback: ()=>void
+    CloseCallback: ()=>void,
+    Header: string,
+    Body: string
 }
 
 export default function NotificationBase(props: NotificationBaseProps) {
@@ -12,10 +14,10 @@ export default function NotificationBase(props: NotificationBaseProps) {
                 icon={<IconCheck size="1.2rem"/>} 
                 color='teal' 
                 radius="lg" 
-                title="Account creation successful!"
+                title={props.Header}
                 onClose={props.CloseCallback}
             >
-                Please verify your email before logging in.
+                {props.Body}
             </Notification>
 
         </>
