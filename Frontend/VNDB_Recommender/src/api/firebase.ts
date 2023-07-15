@@ -4,6 +4,11 @@ import { getAnalytics } from "firebase/analytics";
 import { firebaseConfig } from "./firebase_config";
 import { getAuth } from "firebase/auth";
 
+export interface FirebaseError {
+    code: string,
+    message: string
+}
+
 // Initialize Firebase
 
 const app = initializeApp(firebaseConfig);

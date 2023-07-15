@@ -2,7 +2,6 @@ import './App.css';
 import { MantineProvider } from '@mantine/core';
 import LandingPage from './pages/LandingPage';
 import HeaderBar from './components/HeaderBar';
-import { auth } from './api/firebase';
 import { useState } from 'react';
 import Search from './pages/Search';
 
@@ -13,9 +12,6 @@ import Search from './pages/Search';
 //      Unlock filter options with verified account
 
 function App() {
-  const user = auth.currentUser;
-  console.log(user);
-
   const [uid, setUID] = useState(-1);
 
   return (
@@ -23,7 +19,7 @@ function App() {
       theme={{colorScheme: 'dark'}}
     >
       <HeaderBar/>
-      {uid < 0 ? <LandingPage onSearch={setUID}/> : <Search uid={uid}/>}
+      {uid < 0 ? <LandingPage onSearch={setUID}/> : <Search ReturnCallback={()=>{setUID(-1)}} uid={uid}/>}
     </MantineProvider>
   )
 }

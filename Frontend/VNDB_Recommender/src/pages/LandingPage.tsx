@@ -23,11 +23,12 @@ function OnStart(val: string, lan_filters: string[], plat_filters: string[],
 
 function LandingPage(props: LandingPageProps) {
     const [searchValue, setSearchValue] = useInputState('');
-    const [placeholderValue, setPlaceholderValue] = useInputState('u1234')
-    const [errorValue, setErrorValue] = useInputState('')
-    const [buttonPadding, setButtonPadding] = useInputState("0")
-    const [lanFilters, setLanFilters] = useInputState(new Array<string>)
-    const [platFilters, setPlatFilters] = useInputState(new Array<string>)
+    const [placeholderValue, setPlaceholderValue] = useInputState('u1234');
+    const [errorValue, setErrorValue] = useInputState('');
+    const [buttonPadding, setButtonPadding] = useInputState("0");
+    const [lanFilters, setLanFilters] = useInputState(new Array<string>);
+    const [platFilters, setPlatFilters] = useInputState(new Array<string>);
+
 
     const OnError = () => {
         setPlaceholderValue("");

@@ -1,9 +1,10 @@
-import { Button, Flex, TextInput, PasswordInput } from '@mantine/core'
+import { Button, Flex, TextInput, PasswordInput, LoadingOverlay } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import SignUpPassword from './SignUpPassword';
 import { useState } from 'react';
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth"
-import { auth } from '../api/firebase';
+import { AuthErrorCodes, UserCredential, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth"
+import { FirebaseError, auth } from '../api/firebase';
+import { useDisclosure } from '@mantine/hooks';
 
 export interface SignUpContentsProps {
     CloseCallback: ()=>void,
@@ -13,6 +14,8 @@ export interface SignUpContentsProps {
 function SignUpContents(props : SignUpContentsProps) {
     const [password, setPassword] = useState("");
     const [disabled, setDisabled] = useState(true)
+    const [visible, { close, open }] = useDisclosure(false);
+    const [emailError, setEmailError] = useState("");
 
     const form = useForm({
         initialValues: {
@@ -29,21 +32,42 @@ function SignUpContents(props : SignUpContentsProps) {
         form.getInputProps("confirm_password").value === password);
 
     async function SignUpUser(NotificationCallback: undefined | (()=>void)) {
-        const userCredential = await createUserWithEmailAndPassword(auth, form.getInputProps('email').value, form.getInputProps('confirm_password').value);
+        setEmailError("");
+        open();
+        let userCredential: UserCredential;
+        try {
+            userCredential = await createUserWithEmailAndPassword(auth, form.getInputProps('email').value, 
+                form.getInputProps('confirm_password').value);
+        } catch (error) {
+            const firebaseError = error as FirebaseError;
+            switch(firebaseError.code) {
+                case AuthErrorCodes.EMAIL_EXISTS:
+                    setEmailError("Account already exists");
+                    break;
+                case AuthErrorCodes.INVALID_EMAIL:
+                    setEmailError("Invalid email address");
+                    break;
+            }
+            close();
+            return;
+        }
         const user = userCredential.user;
         await sendEmailVerification(user);
         if(NotificationCallback) NotificationCallback();
+        close();
         props.CloseCallback();
     }
 
     return (
         <form>
             <Flex direction="column" gap="xl">
-                    <TextInput 
+                    <LoadingOverlay visible={visible} overlayBlur={2}/>
+                    <TextInput
                         label="Email"
                         withAsterisk
                         required
                         {...form.getInputProps('email')}
+                        error={emailError}
                     />
                     <SignUpPassword PasswordCallback={setPassword} DisabledCallback={setDisabled}/>
                     <PasswordInput
