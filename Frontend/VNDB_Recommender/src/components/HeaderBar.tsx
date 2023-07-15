@@ -1,18 +1,12 @@
-import { Group, Header, Portal, Text, createStyles, rem, keyframes, Center, Avatar, UnstyledButton } from "@mantine/core";
+import { Group, Header, Text, createStyles, rem, Center } from "@mantine/core";
 import ModalBase from "./ModalBase";
 import SignUpContents from "./SignUpContents";
 import LogInContents from "./LogInContents";
-import NotificationBase from "./NotificationBase";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../api/firebase";
 import UserMenu from "./UserMenu";
-
-const slide = keyframes({
-    'from': {right: "-23rem"},
-    '75%': {right: "5rem"},
-    'to': {right:"2rem"}
-})
+import Notification, { NotificationRef } from "./Notification";
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -25,27 +19,14 @@ const useStyles = createStyles((theme) => ({
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center'
-    },
-    portal: {
-        position: "absolute", 
-        zIndex: 1, 
-        right: "-23rem",
-        maxWidth: "30%",
-        bottom:"20rem"
-    },
-    portalAnimation:{
-        animation: `${slide} 1s ease-in-out`,
-        animationFillMode: "forwards"
-    },
-    hide: {
-        display:"none"
     }
 }))
 
 export default function HeaderBar() {
 
     const { classes } = useStyles();
-    const [animClass, setAnimClass] = useState("");
+    const signRef = useRef<NotificationRef>();
+    const logRef = useRef<NotificationRef>();
     const [loggedIn, setLoggedIn] = useState(false);
 
     onAuthStateChanged(auth, (user)=>{
@@ -68,21 +49,18 @@ export default function HeaderBar() {
                     Visual Novel Recommender
                 </Text>
                 <Group sx={{display: loggedIn ? "none" : "visible"}}>
-                    <ModalBase Contents={LogInContents} ButtonText="Log in" ButtonVariant="default"/>
+                    <ModalBase Contents={LogInContents} ButtonText="Log in" ButtonVariant="default"
+                        OptionalCallback={logRef}
+                    />
                     <ModalBase Contents={SignUpContents} ButtonText="Sign up" 
-                        OptionalCallback={()=>{setAnimClass(classes.portalAnimation)}}
+                        OptionalCallback={signRef}
                     />
                 </Group>
                 <Center sx={{display: loggedIn ? "visible" : "none"}}>
                     <UserMenu/>
                 </Center>
-                <Portal className={`${classes.portal} ${animClass} ${animClass === "" ? classes.hide : ""}`}>
-                    <NotificationBase 
-                        CloseCallback={()=>{setAnimClass("");}}
-                        Header="Account creation successful!"
-                        Body="Please verify your email before logging in."
-                    />
-                </Portal>
+                <Notification header="Account creation successful!" body="Please verify your email before logging in." ref={signRef}/>
+                <Notification header="Password reset email sent!" body="Please use the email to reset your password." ref={logRef}/>
             </div>
         </Header>
     )

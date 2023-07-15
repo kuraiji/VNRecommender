@@ -4,10 +4,12 @@ import { AuthErrorCodes, UserCredential, signInWithEmailAndPassword, sendPasswor
 import { FirebaseError, auth } from '../api/firebase';
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
+import { NotificationRef } from './Notification';
 
 export interface LogInContentsProps {
     CloseCallback: ()=>void,
-    NotificationCallback?: ()=>void
+    NotificationCallback?: (()=>void) | undefined | React.MutableRefObject<NotificationRef | undefined>
+    
 }
 
 function LogInContents(props: LogInContentsProps) {
@@ -34,18 +36,23 @@ function LogInContents(props: LogInContentsProps) {
         try {
             await sendPasswordResetEmail(auth, form.getInputProps("email").value);
         } catch (error) {
+            console.log(error)
             const firebaseError = error as FirebaseError;
             switch(firebaseError.code) {
                 case AuthErrorCodes.INVALID_EMAIL:
-                    setEmailError("Invalid Email Address");
+                    setEmailError("Invalid email address");
                     break;
                 case AuthErrorCodes.USER_DELETED:
                     setEmailError("Account doesn't exist");
+                    break;
+                case "auth/missing-email":
+                    setEmailError("Empty email field");
                     break;
             }
             close();
             return;
         }
+        if(typeof props.NotificationCallback !== "function") props.NotificationCallback?.current?.play();
         close();
         return;
     }

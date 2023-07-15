@@ -5,10 +5,11 @@ import { useState } from 'react';
 import { AuthErrorCodes, UserCredential, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth"
 import { FirebaseError, auth } from '../api/firebase';
 import { useDisclosure } from '@mantine/hooks';
+import { NotificationRef } from './Notification';
 
 export interface SignUpContentsProps {
     CloseCallback: ()=>void,
-    NotificationCallback?: ()=>void
+    NotificationCallback?: (()=>void) | undefined | React.MutableRefObject<NotificationRef | undefined>
 }
 
 function SignUpContents(props : SignUpContentsProps) {
@@ -31,7 +32,7 @@ function SignUpContents(props : SignUpContentsProps) {
     const isDisabled = !(form.getInputProps("email").value && 
         form.getInputProps("confirm_password").value === password);
 
-    async function SignUpUser(NotificationCallback: undefined | (()=>void)) {
+    async function SignUpUser(NotificationCallback: (()=>void) | undefined | React.MutableRefObject<NotificationRef | undefined>) {
         setEmailError("");
         open();
         let userCredential: UserCredential;
@@ -53,7 +54,8 @@ function SignUpContents(props : SignUpContentsProps) {
         }
         const user = userCredential.user;
         await sendEmailVerification(user);
-        if(NotificationCallback) NotificationCallback();
+        if(typeof NotificationCallback === "function") NotificationCallback();
+        else NotificationCallback?.current?.play();
         close();
         props.CloseCallback();
     }
