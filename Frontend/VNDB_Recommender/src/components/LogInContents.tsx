@@ -4,7 +4,8 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../api/firebase';
 
 export interface LogInContentsProps {
-    CloseCallback: ()=>void
+    CloseCallback: ()=>void,
+    NotificationCallback?: ()=>void
 }
 
 function LogInContents(props: LogInContentsProps) {

@@ -6,7 +6,8 @@ import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/
 import { auth } from '../api/firebase';
 
 export interface SignUpContentsProps {
-    CloseCallback: ()=>void
+    CloseCallback: ()=>void,
+    NotificationCallback?: ()=>void
 }
 
 function SignUpContents(props : SignUpContentsProps) {
@@ -27,10 +28,11 @@ function SignUpContents(props : SignUpContentsProps) {
     const isDisabled = !(form.getInputProps("email").value && 
         form.getInputProps("confirm_password").value === password);
 
-    async function SignUpUser() {
+    async function SignUpUser(NotificationCallback: undefined | (()=>void)) {
         const userCredential = await createUserWithEmailAndPassword(auth, form.getInputProps('email').value, form.getInputProps('confirm_password').value);
         const user = userCredential.user;
-        const verification = await sendEmailVerification(user);
+        await sendEmailVerification(user);
+        if(NotificationCallback) NotificationCallback();
         props.CloseCallback();
     }
 
@@ -49,7 +51,7 @@ function SignUpContents(props : SignUpContentsProps) {
                         required
                         {...form.getInputProps('confirm_password')}
                     />
-                    <Button onClick={SignUpUser} disabled={disabled || isDisabled}>Create Account</Button>
+                    <Button onClick={()=>{SignUpUser(props.NotificationCallback)}} disabled={disabled || isDisabled}>Create Account</Button>
                 </Flex>
             </form>
     )

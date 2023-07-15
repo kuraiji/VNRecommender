@@ -7,7 +7,8 @@ import { LogInContentsProps } from "./LogInContents";
 interface ModalBaseProps{
     ButtonVariant?: string,
     ButtonText: string,
-    Contents: (props: SignUpContentsProps | LogInContentsProps)=>JSX.Element
+    Contents: (props: SignUpContentsProps | LogInContentsProps)=>JSX.Element,
+    OptionalCallback?: ()=>void
 }
 
 function ModalBase(props: ModalBaseProps) {
@@ -16,7 +17,7 @@ function ModalBase(props: ModalBaseProps) {
     return (
         <>
             <Modal opened={opened} onClose={close} title="Authentication">
-                {props.Contents({CloseCallback: close})}
+                {props.Contents({CloseCallback: close, NotificationCallback: props.OptionalCallback})}
             </Modal>
             <Group position="center">
                 <Button variant={props.ButtonVariant} onClick={open}>{props.ButtonText}</Button>

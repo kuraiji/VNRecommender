@@ -3,6 +3,7 @@ import ModalBase from "./ModalBase";
 import SignUpContents from "./SignUpContents";
 import LogInContents from "./LogInContents";
 import NotificationBase from "./NotificationBase";
+import { useState } from "react";
 
 const slide = keyframes({
     'from': {right: "-23rem"},
@@ -25,6 +26,7 @@ const useStyles = createStyles((theme) => ({
     portal: {
         position: "absolute", 
         zIndex: 1, 
+        right: "-23rem",
         maxWidth: "30%",
         bottom:"20rem",
     },
@@ -37,6 +39,7 @@ const useStyles = createStyles((theme) => ({
 export default function HeaderBar() {
 
     const { classes } = useStyles();
+    const [animClass, setAnimClass] = useState("");
 
     return (
         <Header height={56} className={classes.header} mb={120} w="100vw">
@@ -51,10 +54,10 @@ export default function HeaderBar() {
                 </Text>
                 <Group>
                     <ModalBase Contents={LogInContents} ButtonText="Log in" ButtonVariant="default"/>
-                    <ModalBase Contents={SignUpContents} ButtonText="Sign up"/>
+                    <ModalBase Contents={SignUpContents} ButtonText="Sign up" OptionalCallback={()=>{setAnimClass(classes.portalAnimation)}}/>
                 </Group>
-                <Portal className={`${classes.portal} ${classes.portalAnimation}`}>
-                    <NotificationBase/>
+                <Portal className={`${classes.portal} ${animClass}`}>
+                    <NotificationBase CloseCallback={()=>{setAnimClass("");}}/>
                 </Portal>
             </div>
         </Header>

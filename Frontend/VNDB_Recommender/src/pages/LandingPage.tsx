@@ -3,15 +3,17 @@ import { useInputState } from "@mantine/hooks";
 import FloatingLabel from "../components/FloatingLabel";
 import MultiSelectLanguages from "../components/MultiSelectLanguages";
 import MultiSelectPlatforms from "../components/MultiSelectPlatforms";
-import { GetRecommendations } from "../api/main";
+
+interface LandingPageProps {
+    onSearch: React.Dispatch<React.SetStateAction<number>>
+}
 
 function OnStart(val: string, lan_filters: string[], plat_filters: string[], 
-    errorCallback: ()=>void, unerrorCallback: ()=>void): void {
+    errorCallback: ()=>void, unerrorCallback: ()=>void, 
+    searchCallback: React.Dispatch<React.SetStateAction<number>>): void {
     if(/u([0-9]){0,7}\w/.test(val)) {
         unerrorCallback();
-        GetRecommendations({userid: 2, language_filters: lan_filters, platform_filters: plat_filters}).then((res)=>{
-            console.log(res);
-        })
+        searchCallback(Number(val.substring(1)));
         
     }
     else {
@@ -19,7 +21,7 @@ function OnStart(val: string, lan_filters: string[], plat_filters: string[],
     }
 }
 
-function LandingPage() {
+function LandingPage(props: LandingPageProps) {
     const [searchValue, setSearchValue] = useInputState('');
     const [placeholderValue, setPlaceholderValue] = useInputState('u1234')
     const [errorValue, setErrorValue] = useInputState('')
@@ -49,7 +51,7 @@ function LandingPage() {
                     error={errorValue}
                 />
                 <Button 
-                    onClick={()=>{OnStart(searchValue, lanFilters, platFilters, OnError, OnUnerror)}}
+                    onClick={()=>{OnStart(searchValue, lanFilters, platFilters, OnError, OnUnerror, props.onSearch)}}
                     mb={buttonPadding}
                     variant="gradient"
                     gradient={{from: 'aqua', to: 'aquamarine', deg: 143}}
