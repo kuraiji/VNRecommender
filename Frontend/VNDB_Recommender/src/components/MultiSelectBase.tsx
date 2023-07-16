@@ -15,11 +15,10 @@ function MultiSelectBase(props : MultiSelectBaseProps) {
     const [disabled, setDisabled] = useState(true);
 
     onAuthStateChanged(auth, (user) => {
-        if(user && user.emailVerified) {
+        if(disabled && user && user.emailVerified) {
             setDisabled(false);
-        }
-        else {
-            setDisabled(true);
+        } else if(!disabled && !user){
+            setDisabled(true)
         }
     })
 

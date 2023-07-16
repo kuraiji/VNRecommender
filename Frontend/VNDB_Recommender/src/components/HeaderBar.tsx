@@ -30,9 +30,9 @@ export default function HeaderBar() {
     const [loggedIn, setLoggedIn] = useState(false);
 
     onAuthStateChanged(auth, (user)=>{
-        if(user && user.emailVerified) {
+        if(!loggedIn && user && user.emailVerified) {
             setLoggedIn(true);
-        } else {
+        } else if (loggedIn && !user) {
             setLoggedIn(false);
         }
     })

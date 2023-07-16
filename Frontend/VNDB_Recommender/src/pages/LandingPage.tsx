@@ -3,17 +3,22 @@ import { useInputState } from "@mantine/hooks";
 import FloatingLabel from "../components/FloatingLabel";
 import MultiSelectLanguages from "../components/MultiSelectLanguages";
 import MultiSelectPlatforms from "../components/MultiSelectPlatforms";
+import { GetRecommendationsProps } from "../api/main";
 
 interface LandingPageProps {
-    onSearch: React.Dispatch<React.SetStateAction<number>>
+    onSearch: React.Dispatch<React.SetStateAction<GetRecommendationsProps | undefined>>
 }
 
 function OnStart(val: string, lan_filters: string[], plat_filters: string[], 
     errorCallback: ()=>void, unerrorCallback: ()=>void, 
-    searchCallback: React.Dispatch<React.SetStateAction<number>>): void {
+    searchCallback: React.Dispatch<React.SetStateAction<GetRecommendationsProps | undefined>>): void {
     if(/u([0-9]){0,7}\w/.test(val)) {
         unerrorCallback();
-        searchCallback(Number(val.substring(1)));
+        searchCallback({
+            userid: Number(val.substring(1)), 
+            language_filters: lan_filters,
+            platform_filters: plat_filters
+        })
         
     }
     else {
