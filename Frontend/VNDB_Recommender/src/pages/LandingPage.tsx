@@ -4,6 +4,9 @@ import FloatingLabel from "../components/FloatingLabel";
 import MultiSelectLanguages from "../components/MultiSelectLanguages";
 import MultiSelectPlatforms from "../components/MultiSelectPlatforms";
 import { GetRecommendationsProps } from "../api/main";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../api/firebase";
+import { useState } from "react";
 
 interface LandingPageProps {
     onSearch: React.Dispatch<React.SetStateAction<GetRecommendationsProps | undefined>>
@@ -33,7 +36,7 @@ function LandingPage(props: LandingPageProps) {
     const [buttonPadding, setButtonPadding] = useInputState("0");
     const [lanFilters, setLanFilters] = useInputState(new Array<string>);
     const [platFilters, setPlatFilters] = useInputState(new Array<string>);
-
+    const [hideText, setHideText] = useState(false);
 
     const OnError = () => {
         setPlaceholderValue("");
@@ -45,6 +48,14 @@ function LandingPage(props: LandingPageProps) {
         setErrorValue("");
         setButtonPadding("0");
     }
+
+    onAuthStateChanged(auth, (user) => {
+        if(!hideText && user && user.emailVerified) {
+            setHideText(true);
+        } else if(hideText && !user) {
+            setHideText(false);
+        }
+    })
 
     return (
         <Flex justify={"center"} direction={"column"} align={"center"}>

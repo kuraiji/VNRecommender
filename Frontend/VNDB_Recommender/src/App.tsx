@@ -6,11 +6,15 @@ import { useState } from 'react';
 import Search from './pages/Search';
 import { GetRecommendationsProps } from './api/main';
 
-//TODO: Search VN Page
-//      Firebase Sign Up
-//      Firebase Log In
-//      Firebase Account Management
-//      Unlock filter options with verified account
+/*
+Todo:
+  Search Page and Functionality
+  User Settings Panel
+  User Change Password
+  User Delete Account
+  Skeleton To Hide Initial Account Load
+  Make UI Prettier If Needed
+*/
 
 function App() {
   const [search, setSearch] = useState<GetRecommendationsProps>();
