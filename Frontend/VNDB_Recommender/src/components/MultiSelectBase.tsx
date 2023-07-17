@@ -1,14 +1,26 @@
 import { MultiSelect  } from "@mantine/core";
+import { onAuthStateChanged } from "firebase/auth";
 import { useState } from "react";
+import { auth } from "../api/firebase";
 
 interface MultiSelectBaseProps {
     data: {value: string, label: string}[],
     label: string,
-    nothingFound: string
+    nothingFound: string,
+    onValueChanged: (val: string[])=>void
 }
 
 function MultiSelectBase(props : MultiSelectBaseProps) {
     const [searchValue, onSearchChange] = useState('')
+    const [disabled, setDisabled] = useState(true);
+
+    onAuthStateChanged(auth, (user) => {
+        if(disabled && user && user.emailVerified) {
+            setDisabled(false);
+        } else if(!disabled && !user){
+            setDisabled(true)
+        }
+    })
 
     return (
         <MultiSelect data={props.data}
@@ -21,7 +33,8 @@ function MultiSelectBase(props : MultiSelectBaseProps) {
         clearable
         maxSelectedValues={5}
         transitionProps={{ duration: 150, transition: 'pop-top-left', timingFunction: 'ease' }}
-        
+        onChange={props.onValueChanged}
+        disabled={disabled}
         />
     );
 }

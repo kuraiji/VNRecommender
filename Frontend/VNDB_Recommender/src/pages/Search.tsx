@@ -1,0 +1,30 @@
+import { Button } from "@mantine/core"
+import { GetRecommendations, GetRecommendationsProps } from "../api/main"
+import { useEffect, useState } from "react"
+
+interface SearchProps {
+    req: GetRecommendationsProps,
+    ReturnCallback: ()=>void
+}
+
+export default function Search(props: SearchProps) {
+    const [results, setResults] = useState<Array<{vnid: number, rating: number}>>();
+
+    const printList = results?.map(result => <li>{result.vnid} {result.rating}</li>)
+
+    
+
+    useEffect(()=>{
+        GetRecommendations(props.req).then((results)=>{
+            setResults(results);
+        })
+    },[props.req, setResults]);
+
+    return(
+        <>
+            <p>Uh oh, big stinky User: {props.req.userid}</p>
+            <Button onClick={props.ReturnCallback}>Return</Button>
+            <ul>{printList}</ul>
+        </>
+    )
+}

@@ -3,14 +3,24 @@ import { useInputState } from "@mantine/hooks";
 import FloatingLabel from "../components/FloatingLabel";
 import MultiSelectLanguages from "../components/MultiSelectLanguages";
 import MultiSelectPlatforms from "../components/MultiSelectPlatforms";
-import { GetRecommendations } from "../api/main";
+import { GetRecommendationsProps } from "../api/main";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../api/firebase";
+import { useState } from "react";
 
-function OnStart(val: string, errorCallback: ()=>void, unerrorCallback: ()=>void): void {
+interface LandingPageProps {
+    onSearch: React.Dispatch<React.SetStateAction<GetRecommendationsProps | undefined>>
+}
+
+function OnStart(val: string, lan_filters: string[], plat_filters: string[], 
+    errorCallback: ()=>void, unerrorCallback: ()=>void, 
+    searchCallback: React.Dispatch<React.SetStateAction<GetRecommendationsProps | undefined>>): void {
     if(/u([0-9]){0,7}\w/.test(val)) {
-        console.log(val);
         unerrorCallback();
-        GetRecommendations({userid: 2, language_filters: ["en"], platform_filters: ["win"]}).then((res)=>{
-            console.log(res);
+        searchCallback({
+            userid: Number(val.substring(1)), 
+            language_filters: lan_filters,
+            platform_filters: plat_filters
         })
         
     }
@@ -19,11 +29,14 @@ function OnStart(val: string, errorCallback: ()=>void, unerrorCallback: ()=>void
     }
 }
 
-function LandingPage() {
+function LandingPage(props: LandingPageProps) {
     const [searchValue, setSearchValue] = useInputState('');
-    const [placeholderValue, setPlaceholderValue] = useInputState('u1234')
-    const [errorValue, setErrorValue] = useInputState('')
-    const [buttonPadding, setButtonPadding] = useInputState("0")
+    const [placeholderValue, setPlaceholderValue] = useInputState('u1234');
+    const [errorValue, setErrorValue] = useInputState('');
+    const [buttonPadding, setButtonPadding] = useInputState("0");
+    const [lanFilters, setLanFilters] = useInputState(new Array<string>);
+    const [platFilters, setPlatFilters] = useInputState(new Array<string>);
+    const [hideText, setHideText] = useState(false);
 
     const OnError = () => {
         setPlaceholderValue("");
@@ -36,6 +49,14 @@ function LandingPage() {
         setButtonPadding("0");
     }
 
+    onAuthStateChanged(auth, (user) => {
+        if(!hideText && user && user.emailVerified) {
+            setHideText(true);
+        } else if(hideText && !user) {
+            setHideText(false);
+        }
+    })
+
     return (
         <Flex justify={"center"} direction={"column"} align={"center"}>
             <p>Please enter your VNDB ID to begin:</p>
@@ -47,7 +68,7 @@ function LandingPage() {
                     error={errorValue}
                 />
                 <Button 
-                    onClick={()=>{OnStart(searchValue, OnError, OnUnerror)}}
+                    onClick={()=>{OnStart(searchValue, lanFilters, platFilters, OnError, OnUnerror, props.onSearch)}}
                     mb={buttonPadding}
                     variant="gradient"
                     gradient={{from: 'aqua', to: 'aquamarine', deg: 143}}
@@ -65,8 +86,12 @@ function LandingPage() {
                 <Text span c="aquamarine"> please create an account</Text>.
             </Text>
             <Flex gap="md">
-                <MultiSelectLanguages/>
-                <MultiSelectPlatforms/>
+                <MultiSelectLanguages 
+                    onValueChanged={(language_filters)=>{setLanFilters(language_filters)}}
+                />
+                <MultiSelectPlatforms
+                    onValueChanged={(platform_filters)=>{setPlatFilters(platform_filters)}}
+                />
             </Flex>
         </Flex>
     );

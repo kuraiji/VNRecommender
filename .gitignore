@@ -4,3 +4,4 @@
 /Backend/AIRecommender/fetched2.db
 /fetched2.db
 /Backend/AIRecommender/Model.joblib
+/Frontend/VNDB_Recommender/src/api/firebase_config.ts

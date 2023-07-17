@@ -50,12 +50,17 @@ const platforms = [
     {value: "xxs", label: "Xbox Series"}
 ]
 
-function MultiSelectPlatforms() {
+interface MultiSelectPlatformsProps {
+    onValueChanged: (val: string[])=>void
+}
+
+function MultiSelectPlatforms(props: MultiSelectPlatformsProps) {
     return (
         <MultiSelectBase 
         data={platforms}
         nothingFound="No Platforms Found"
         label="Retrieve only VNs from these platforms"
+        onValueChanged={props.onValueChanged}
         />
     );
 }

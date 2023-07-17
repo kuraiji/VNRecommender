@@ -49,11 +49,16 @@ const languages = [
     {value: "zh-Hant", label: "Chinese - Traditional"}
 ]
 
-function MultiSelectLanguages() {
+interface MultiSelectLanguagesProps {
+    onValueChanged: (val: string[])=>void
+}
+
+function MultiSelectLanguages(props: MultiSelectLanguagesProps) {
     return (
         <MultiSelectBase data={languages} 
         label="Retrieve only VNs of these languages"
         nothingFound="No Languages Found"
+        onValueChanged={props.onValueChanged}
         />
     );
 }

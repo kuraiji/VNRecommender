@@ -1,7 +1,12 @@
-import { Group, Header, Text, createStyles, rem } from "@mantine/core";
+import { Group, Header, Text, createStyles, rem, Center } from "@mantine/core";
 import ModalBase from "./ModalBase";
 import SignUpContents from "./SignUpContents";
 import LogInContents from "./LogInContents";
+import { useRef, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../api/firebase";
+import UserMenu from "./UserMenu";
+import Notification, { NotificationRef } from "./Notification";
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -20,6 +25,17 @@ const useStyles = createStyles((theme) => ({
 export default function HeaderBar() {
 
     const { classes } = useStyles();
+    const signRef = useRef<NotificationRef>();
+    const logRef = useRef<NotificationRef>();
+    const [loggedIn, setLoggedIn] = useState(false);
+
+    onAuthStateChanged(auth, (user)=>{
+        if(!loggedIn && user && user.emailVerified) {
+            setLoggedIn(true);
+        } else if (loggedIn && !user) {
+            setLoggedIn(false);
+        }
+    })
 
     return (
         <Header height={56} className={classes.header} mb={120} w="100vw">
@@ -32,10 +48,19 @@ export default function HeaderBar() {
                 >
                     Visual Novel Recommender
                 </Text>
-                <Group>
-                    <ModalBase Contents={LogInContents()} ButtonText="Log in" ButtonVariant="default"/>
-                    <ModalBase Contents={SignUpContents()} ButtonText="Sign up"/>
+                <Group sx={{display: loggedIn ? "none" : "visible"}}>
+                    <ModalBase Contents={LogInContents} ButtonText="Log in" ButtonVariant="default"
+                        OptionalCallback={logRef}
+                    />
+                    <ModalBase Contents={SignUpContents} ButtonText="Sign up" 
+                        OptionalCallback={signRef}
+                    />
                 </Group>
+                <Center sx={{display: loggedIn ? "visible" : "none"}}>
+                    <UserMenu/>
+                </Center>
+                <Notification header="Account creation successful!" body="Please verify your email before logging in." ref={signRef}/>
+                <Notification header="Password reset email sent!" body="Please use the email to reset your password." ref={logRef}/>
             </div>
         </Header>
     )

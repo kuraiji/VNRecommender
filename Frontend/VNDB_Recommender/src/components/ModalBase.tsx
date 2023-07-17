@@ -1,11 +1,15 @@
 import { useDisclosure } from "@mantine/hooks";
 import { Modal, Button, Group } from '@mantine/core'
-import { ReactElement } from "react";
+import { SignUpContentsProps } from "./SignUpContents";
+import { LogInContentsProps } from "./LogInContents";
+import { NotificationRef } from "./Notification";
+
 
 interface ModalBaseProps{
     ButtonVariant?: string,
     ButtonText: string,
-    Contents: ReactElement
+    Contents: (props: SignUpContentsProps | LogInContentsProps)=>JSX.Element,
+    OptionalCallback?: (()=>void) | undefined | React.MutableRefObject<NotificationRef | undefined>
 }
 
 function ModalBase(props: ModalBaseProps) {
@@ -14,7 +18,7 @@ function ModalBase(props: ModalBaseProps) {
     return (
         <>
             <Modal opened={opened} onClose={close} title="Authentication">
-                {props.Contents}
+                {props.Contents({CloseCallback: close, NotificationCallback: props.OptionalCallback})}
             </Modal>
             <Group position="center">
                 <Button variant={props.ButtonVariant} onClick={open}>{props.ButtonText}</Button>
