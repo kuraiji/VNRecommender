@@ -9,7 +9,6 @@ import { GetRecommendationsProps } from './api/main';
 /*
 Todo:
   Search Page and Functionality
-  User Settings Panel
   User Change Password
   User Delete Account
   Skeleton To Hide Initial Account Load
