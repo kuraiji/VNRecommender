@@ -6,7 +6,8 @@ import { useEffect } from 'react';
 interface SignUpPasswordProps {
     PasswordCallback: React.Dispatch<React.SetStateAction<string>>,
     DisabledCallback: React.Dispatch<React.SetStateAction<boolean>>,
-    Label?: string
+    Label?: string,
+    Error?: string
 }
 
 const colors = {
@@ -80,6 +81,7 @@ function SignUpPassword(props: SignUpPasswordProps){
                 }}
                 label={typeof props.Label === "string" ? props.Label : "Password"}
                 required
+                error={typeof props.Error === "string" ? props.Error : ""}
             />
             <Group spacing={5} grow mt="xs" mb="md">
                 {bars}

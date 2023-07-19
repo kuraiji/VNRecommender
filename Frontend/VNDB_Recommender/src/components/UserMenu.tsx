@@ -4,13 +4,15 @@ import { signOut } from "firebase/auth"
 import { auth } from "../api/firebase";
 import ModalBase from "./ModalBase";
 import UserSettings from "./UserSettings";
-import { createRef } from "react";
+import { createRef, useRef } from "react";
 import { useDisclosure } from "@mantine/hooks";
+import Notification, { NotificationRef } from "./Notification";
 
 
 export default function UserMenu() {
 
     const [opened, {open, close}] = useDisclosure(false);
+    const changePassRef = useRef<NotificationRef>();
 
     return(
         <>
@@ -30,8 +32,9 @@ export default function UserMenu() {
                 </Menu.Dropdown>
             </Menu>
             <Modal opened={opened} onClose={close} title="Settings">
-                    {UserSettings()}
+                    {UserSettings({onChangedPassword: changePassRef.current?.play})}
             </Modal>
+            <Notification header="Password Changed" body="Your password has been changed!" ref={changePassRef}/>
         </>
     )
 }

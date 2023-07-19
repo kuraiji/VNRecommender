@@ -20,7 +20,7 @@ const slide = keyframes({
 const useStyles = createStyles(() => ({
     portal: {
         position: "fixed", 
-        zIndex: 200, 
+        zIndex: 300, 
         right: "-23rem",
         maxWidth: "30%",
         bottom:"20rem"
