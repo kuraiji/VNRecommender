@@ -2,9 +2,8 @@ import { Avatar, Menu, Modal, UnstyledButton } from "@mantine/core";
 import { IconLogout, IconSettings } from "@tabler/icons-react";
 import { signOut } from "firebase/auth"
 import { auth } from "../api/firebase";
-import ModalBase from "./ModalBase";
 import UserSettings from "./UserSettings";
-import { createRef, useRef } from "react";
+import { useRef } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import Notification, { NotificationRef } from "./Notification";
 
@@ -32,7 +31,7 @@ export default function UserMenu() {
                 </Menu.Dropdown>
             </Menu>
             <Modal opened={opened} onClose={close} title="Settings">
-                    {UserSettings({onChangedPassword: changePassRef.current?.play})}
+                    {UserSettings({onChangedPassword: changePassRef.current?.play, closeMenu: close})}
             </Modal>
             <Notification header="Password Changed" body="Your password has been changed!" ref={changePassRef}/>
         </>

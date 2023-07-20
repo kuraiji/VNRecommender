@@ -2,7 +2,7 @@ import { Button, Flex, TextInput, PasswordInput, LoadingOverlay } from '@mantine
 import { useForm } from '@mantine/form'
 import SignUpPassword from './SignUpPassword';
 import { useState } from 'react';
-import { AuthErrorCodes, UserCredential, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth"
+import { AuthErrorCodes, UserCredential, createUserWithEmailAndPassword, sendEmailVerification, signOut } from "firebase/auth"
 import { FirebaseError, auth } from '../api/firebase';
 import { useDisclosure } from '@mantine/hooks';
 import { NotificationRef } from './Notification';
@@ -56,6 +56,7 @@ function SignUpContents(props : SignUpContentsProps) {
         await sendEmailVerification(user);
         if(typeof NotificationCallback === "function") NotificationCallback();
         else NotificationCallback?.current?.play();
+        signOut(auth);
         close();
         props.CloseCallback();
     }

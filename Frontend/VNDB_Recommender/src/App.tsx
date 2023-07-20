@@ -9,8 +9,7 @@ import { GetRecommendationsProps } from './api/main';
 /*
 Todo:
   Search Page and Functionality
-  User Change Password
-  User Delete Account
+  Skeleton on Search Results
   Skeleton To Hide Initial Account Load
   Make UI Prettier If Needed
 */

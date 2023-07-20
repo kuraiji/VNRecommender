@@ -1,6 +1,6 @@
 import { Button, Flex, TextInput, PasswordInput, LoadingOverlay, Text, UnstyledButton } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { AuthErrorCodes, UserCredential, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { AuthErrorCodes, UserCredential, signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from 'firebase/auth';
 import { FirebaseError, auth } from '../api/firebase';
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
@@ -83,6 +83,7 @@ function LogInContents(props: LogInContentsProps) {
         }
         if(!userCredential.user.emailVerified) {
             setEmailError("Email isn't verified");
+            signOut(auth);
             close();
             return;
         }
