@@ -1,6 +1,7 @@
 import { Button } from "@mantine/core"
 import { GetRecommendations, GetRecommendationsProps } from "../api/main"
 import { useEffect, useState } from "react"
+import ImageCard from "../components/ImageCard";
 
 interface SearchProps {
     req: GetRecommendationsProps,
@@ -22,6 +23,12 @@ export default function Search(props: SearchProps) {
 
     return(
         <>
+            <ImageCard
+                image= ''
+                title= 'Title'
+                description= 'This is a description'
+                stats= {[{title= 'test', value='test'}]}
+            />
             <p>Uh oh, big stinky User: {props.req.userid}</p>
             <Button onClick={props.ReturnCallback}>Return</Button>
             <ul>{printList}</ul>
