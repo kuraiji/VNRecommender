@@ -1,13 +1,17 @@
 import { Box, Progress, PasswordInput, Group, Text, Center } from '@mantine/core'
 import { useInputState } from '@mantine/hooks';
 import { IconCheck, IconX } from "@tabler/icons-react"
-import { useEffect } from 'react';
+import { forwardRef, useEffect, useImperativeHandle } from 'react';
 
 interface SignUpPasswordProps {
     PasswordCallback: React.Dispatch<React.SetStateAction<string>>,
     DisabledCallback: React.Dispatch<React.SetStateAction<boolean>>,
     Label?: string,
     Error?: string
+}
+
+export interface SignUpPasswordRef {
+    clear: ()=>void
 }
 
 const colors = {
@@ -46,50 +50,60 @@ function getStrength(password: string) {
     return result;
 }
 
-function SignUpPassword(props: SignUpPasswordProps){
-    const [value, setValue] = useInputState('');
-    const strength = getStrength(value);
-
-    useEffect(()=>{
-        props.DisabledCallback(getStrength(value) <= 80)
-    },[value, props])
+const SignUpPassword = forwardRef(
+    function SignUpPassword(props: SignUpPasswordProps, ref: React.ForwardedRef<SignUpPasswordRef | undefined>){
+        const [value, setValue] = useInputState('');
+        const strength = getStrength(value);
     
-    const checks = requirements.map((requirement, index) => (
-        <PasswordRequirement key={index} label={requirement.label} meets={requirement.re.test(value)}/>
-    ));
-    const bars = Array(4)
-        .fill(0)
-        .map((_, index) => (
-            <Progress 
-                styles={{ bar: { transitionDuration: '0ms' } }}
-                value={
-                    value.length > 0 && index === 0 ? 100 : strength >= ((index + 1) / 4) * 100 ? 100 : 0
-                }
-                color={strength > 80 ? `${colors.green}` : strength > 50 ? `${colors.yellow}` : `${colors.red}`}
-                key={index}
-                size={4}
-            />
-        ));
+        useEffect(()=>{
+            props.DisabledCallback(getStrength(value) <= 80)
+        },[value, props]);
 
-    return(
-        <div>
-            <PasswordInput
-                value={value}
-                onChange={(val)=>{
-                    setValue(val);
-                    props.PasswordCallback(val.currentTarget.value);
-                }}
-                label={typeof props.Label === "string" ? props.Label : "Password"}
-                required
-                error={typeof props.Error === "string" ? props.Error : ""}
-            />
-            <Group spacing={5} grow mt="xs" mb="md">
-                {bars}
-            </Group>
-            <PasswordRequirement label='Has at least 6 characters' meets={value.length > 5} />
-            {checks}
-        </div>
-    )
-}
+        useImperativeHandle(ref, () => ({
+            clear() {
+                setValue("");
+            }
+        }))
+        
+        const checks = requirements.map((requirement, index) => (
+            <PasswordRequirement key={index} label={requirement.label} meets={requirement.re.test(value)}/>
+        ));
+        const bars = Array(4)
+            .fill(0)
+            .map((_, index) => (
+                <Progress 
+                    styles={{ bar: { transitionDuration: '0ms' } }}
+                    value={
+                        value.length > 0 && index === 0 ? 100 : strength >= ((index + 1) / 4) * 100 ? 100 : 0
+                    }
+                    color={strength > 80 ? `${colors.green}` : strength > 50 ? `${colors.yellow}` : `${colors.red}`}
+                    key={index}
+                    size={4}
+                />
+            ));
+    
+        return(
+            <div>
+                <PasswordInput
+                    value={value}
+                    onChange={(val)=>{
+                        setValue(val);
+                        props.PasswordCallback(val.currentTarget.value);
+                    }}
+                    label={typeof props.Label === "string" ? props.Label : "Password"}
+                    required
+                    error={typeof props.Error === "string" ? props.Error : ""}
+                />
+                <Group spacing={5} grow mt="xs" mb="md">
+                    {bars}
+                </Group>
+                <PasswordRequirement label='Has at least 6 characters' meets={value.length > 5} />
+                {checks}
+            </div>
+        )
+    }
+)
+
+
 
 export default SignUpPassword;
