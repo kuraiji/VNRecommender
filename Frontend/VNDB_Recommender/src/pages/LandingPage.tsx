@@ -1,4 +1,4 @@
-import { Button, Flex, Group, Text } from "@mantine/core";
+import { Button, Flex, Group, Skeleton, Text } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
 import FloatingLabel from "../components/FloatingLabel";
 import MultiSelectLanguages from "../components/MultiSelectLanguages";
@@ -37,6 +37,8 @@ function LandingPage(props: LandingPageProps) {
     const [lanFilters, setLanFilters] = useInputState(new Array<string>);
     const [platFilters, setPlatFilters] = useInputState(new Array<string>);
     const [hideText, setHideText] = useState(false);
+    const [showSkeleton, setShowSkeleton] = useState(true);
+    const [doOnce, setDoOnce] = useState(false);
 
     const OnError = () => {
         setPlaceholderValue("");
@@ -52,8 +54,15 @@ function LandingPage(props: LandingPageProps) {
     onAuthStateChanged(auth, (user) => {
         if(!hideText && user && user.emailVerified) {
             setHideText(true);
+            setShowSkeleton(false);
         } else if(hideText && !user) {
             setHideText(false);
+            setShowSkeleton(false);
+        }
+        else if(!doOnce)
+        {
+            setShowSkeleton(false);
+            setDoOnce(true);
         }
     })
 
@@ -86,13 +95,17 @@ function LandingPage(props: LandingPageProps) {
                 <Text span c="aquamarine"> please create an account</Text>.
             </Text>
             <Flex gap="md">
-                <MultiSelectLanguages 
-                    onValueChanged={(language_filters)=>{setLanFilters(language_filters)}}
-                />
-                <MultiSelectPlatforms
-                    onValueChanged={(platform_filters)=>{setPlatFilters(platform_filters)}}
-                />
-            </Flex>
+                    <Skeleton visible={showSkeleton}>
+                        <MultiSelectLanguages 
+                            onValueChanged={(language_filters)=>{setLanFilters(language_filters)}}
+                        />
+                    </Skeleton>
+                    <Skeleton visible={showSkeleton}>
+                        <MultiSelectPlatforms
+                            onValueChanged={(platform_filters)=>{setPlatFilters(platform_filters)}}
+                        />
+                    </Skeleton>
+            </Flex> 
         </Flex>
     );
 }

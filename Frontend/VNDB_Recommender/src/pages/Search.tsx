@@ -27,7 +27,7 @@ export default function Search(props: SearchProps) {
                 image= ''
                 title= 'Title'
                 description= 'This is a description'
-                stats= {[{title= 'test', value='test'}]}
+                stats= {[{title: 'test', value:'test'}]}
             />
             <p>Uh oh, big stinky User: {props.req.userid}</p>
             <Button onClick={props.ReturnCallback}>Return</Button>

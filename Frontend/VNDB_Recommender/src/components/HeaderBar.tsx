@@ -1,4 +1,4 @@
-import { Group, Header, Text, createStyles, rem, Center } from "@mantine/core";
+import { Group, Header, Text, createStyles, rem, Center, Skeleton } from "@mantine/core";
 import ModalBase from "./ModalBase";
 import SignUpContents from "./SignUpContents";
 import LogInContents from "./LogInContents";
@@ -27,13 +27,19 @@ export default function HeaderBar() {
     const { classes } = useStyles();
     const signRef = useRef<NotificationRef>();
     const logRef = useRef<NotificationRef>();
-    const [loggedIn, setLoggedIn] = useState(false);
+    const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
+    const [doOnce, setDoOnce] = useState(false);
 
     onAuthStateChanged(auth, (user)=>{
         if(!loggedIn && user && user.emailVerified) {
             setLoggedIn(true);
         } else if (loggedIn && !user) {
             setLoggedIn(false);
+        }
+        else if(!doOnce && !user)
+        {
+            setLoggedIn(false);
+            setDoOnce(true);
         }
     })
 
@@ -48,7 +54,10 @@ export default function HeaderBar() {
                 >
                     Visual Novel Recommender
                 </Text>
-                <Group sx={{display: loggedIn ? "none" : "visible"}}>
+                <Center>
+                    <Skeleton circle height={40} visible={loggedIn === null}/>
+                </Center>
+                <Group sx={{display: loggedIn === false ? "visible" : "none"}}>
                     <ModalBase Contents={LogInContents} ButtonText="Log in" ButtonVariant="default"
                         OptionalCallback={logRef}
                     />
@@ -56,7 +65,7 @@ export default function HeaderBar() {
                         OptionalCallback={signRef}
                     />
                 </Group>
-                <Center sx={{display: loggedIn ? "visible" : "none"}}>
+                <Center sx={{display: loggedIn === true ? "visible" : "none"}}>
                     <UserMenu/>
                 </Center>
                 <Notification header="Account creation successful!" body="Please verify your email before logging in." ref={signRef}/>
