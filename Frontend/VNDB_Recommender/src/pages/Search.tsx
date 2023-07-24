@@ -23,12 +23,7 @@ export default function Search(props: SearchProps) {
 
     return(
         <>
-            <ImageCard
-                image= ''
-                title= 'Title'
-                description= 'This is a description'
-                stats= {[{title= 'test', value='test'}]}
-            />
+            
             <p>Uh oh, big stinky User: {props.req.userid}</p>
             <Button onClick={props.ReturnCallback}>Return</Button>
             <ul>{printList}</ul>
