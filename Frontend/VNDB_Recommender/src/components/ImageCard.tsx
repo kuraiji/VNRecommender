@@ -1,10 +1,10 @@
-import { createStyles, Card, Image, Text, Group, RingProgress, rem, UnstyledButton } from '@mantine/core';
+import { createStyles, Card, Image, Text, Group, rem, UnstyledButton } from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
   card: {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-    width: "25vw",
-    minWidth: "400px"
+    width: "18vw",
+    minWidth: "15px"
   },
 
   footer: {
@@ -29,9 +29,14 @@ interface ImageCardProps {
   languages: string[];
   platforms: string[];
   length: string;
+  id: string;
 }
 
-export default function ImageCard({ image, title, description, languages, platforms, length }: ImageCardProps) {
+function Open_VNDB(id: string){
+  window.open('https://vndb.org/' + id, '_blank');
+}
+
+export default function ImageCard({ image, title, description, languages, platforms, length, id }: ImageCardProps) {
   const { classes } = useStyles();
 
   const langs = languages.map((language) => (
@@ -47,10 +52,10 @@ export default function ImageCard({ image, title, description, languages, platfo
 ));
 
   return (
-    <UnstyledButton>
+    <UnstyledButton onClick={()=>{Open_VNDB(id)}}>
       <Card withBorder padding="lg" className={classes.card}>
         <Card.Section>
-          <Image mt={"lg"} src={image} alt={title} height={400} fit='contain'/>
+          <Image mt={"lg"} src={image} alt={title} height={250} fit='contain'/>
         </Card.Section>
 
         <Group position="apart" mt="xl">
@@ -58,26 +63,26 @@ export default function ImageCard({ image, title, description, languages, platfo
             {title}
           </Text>
         </Group>
-        <Text mt="sm" mb="md" c="dimmed" fz="xs" lineClamp={4}>
+        <Text mt="sm" mb="xs" c="dimmed" fz="xs" lineClamp={4}>
           {description}
         </Text>
 
         <Card.Section withBorder className='classes.section'>
-          <Group mt="xs" mb="lg" ml="lg">
+          <Group mt="xs" mb="xs" ml="lg">
             <Text fz="sm" fw={400}>
               Languages: {langs}
             </Text>
           </Group>
         </Card.Section>
         <Card.Section withBorder className='classes.section'>
-          <Group mt="xs" mb="lg" ml="lg">
+          <Group mt="xs" mb="xs" ml="lg">
             <Text fz="sm" fw={400}>
               Platforms: {plats}
             </Text>
           </Group>
         </Card.Section>
         <Card.Section withBorder className='classes.section'>
-          <Group mt="xs" mb="lg" ml="lg">
+          <Group mt="xs" mb="xs" ml="lg">
             <Text fz="sm" fw={400}>
               Average Play Time: {length}
             </Text>
