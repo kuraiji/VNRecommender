@@ -1,8 +1,10 @@
-import { createStyles, Card, Image, Text, Group, RingProgress, rem } from '@mantine/core';
+import { createStyles, Card, Image, Text, Group, RingProgress, rem, UnstyledButton } from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
   card: {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+    width: "25vw",
+    minWidth: "400px"
   },
 
   footer: {
@@ -24,49 +26,64 @@ interface ImageCardProps {
   image: string;
   title: string;
   description: string;
-  stats: {
-    title: string;
-    value: string;
-  }[];
+  languages: string[];
+  platforms: string[];
+  length: string;
 }
 
-export default function ImageCard({ image, title, description, stats }: ImageCardProps) {
+export default function ImageCard({ image, title, description, languages, platforms, length }: ImageCardProps) {
   const { classes } = useStyles();
 
-  const items = stats.map((stat) => (
-    <div key={stat.title}>
-      <Text size="xs" color="dimmed">
-        {stat.title}
+  const langs = languages.map((language) => (
+      <Text component="span" size="xs" mr={5} color="dimmed">
+        {language}
       </Text>
-      <Text weight={500} size="sm">
-        {stat.value}
-      </Text>
-    </div>
   ));
 
+  const plats = platforms.map((platform) => (
+    <Text component="span" size="xs" mr={5} color="dimmed">
+      {platform}
+    </Text>
+));
+
   return (
-    <Card withBorder padding="lg" className={classes.card}>
-      <Card.Section>
-        <Image src={image} alt={title} height={100} />
-      </Card.Section>
+    <UnstyledButton>
+      <Card withBorder padding="lg" className={classes.card}>
+        <Card.Section>
+          <Image mt={"lg"} src={image} alt={title} height={400} fit='contain'/>
+        </Card.Section>
 
-      <Group position="apart" mt="xl">
-        <Text fz="sm" fw={700} className={classes.title}>
-          {title}
-        </Text>
-        <Group spacing={5}>
-          <Text fz="xs" c="dimmed">
-            80% completed
+        <Group position="apart" mt="xl">
+          <Text fz="sm" fw={700} className={classes.title}>
+            {title}
           </Text>
-          <RingProgress size={18} sections={[{ value: 80, color: 'blue' }]} />
         </Group>
-      </Group>
-      <Text mt="sm" mb="md" c="dimmed" fz="xs">
-        {description}
-      </Text>
-      <Card.Section className={classes.footer}>{items}</Card.Section>
-    </Card>
+        <Text mt="sm" mb="md" c="dimmed" fz="xs" lineClamp={4}>
+          {description}
+        </Text>
+
+        <Card.Section withBorder className='classes.section'>
+          <Group mt="xs" mb="lg" ml="lg">
+            <Text fz="sm" fw={400}>
+              Languages: {langs}
+            </Text>
+          </Group>
+        </Card.Section>
+        <Card.Section withBorder className='classes.section'>
+          <Group mt="xs" mb="lg" ml="lg">
+            <Text fz="sm" fw={400}>
+              Platforms: {plats}
+            </Text>
+          </Group>
+        </Card.Section>
+        <Card.Section withBorder className='classes.section'>
+          <Group mt="xs" mb="lg" ml="lg">
+            <Text fz="sm" fw={400}>
+              Average Play Time: {length}
+            </Text>
+          </Group>
+        </Card.Section>
+      </Card>
+    </UnstyledButton>
   );
-
-
 }
