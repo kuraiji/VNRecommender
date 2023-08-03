@@ -3,9 +3,7 @@ import { GetRecommendations, GetRecommendationsProps } from "../api/main"
 import { useEffect, useState } from "react"
 import ImageCard from "../components/ImageCard";
 
-// TODO: Fixed height for cards
-//       Fixed card height
-//       Make sure page is responsive on mobile and desktop
+// TODO: Make sure page is responsive on mobile and desktop
 //       Make page pretty :) 
 
 interface SearchProps {
@@ -78,14 +76,16 @@ export default function Search(props: SearchProps) {
 
     return(
         <>
-            <Flex justify={"center"} direction={"column"} align={"center"}>
-                <p>Uh oh, big stinky User: {props.req.userid}</p>
-                <Flex justify={"center"} direction={"row"} align={"center"} wrap="wrap" gap={'xs'}>
+            <Flex justify={"center"} direction={"column"} align={"center"} mb={'lg'}>
+                <h2>Recommendations for user {props.req.userid}:</h2>
+                <Flex justify={"center"} direction={"row"} align={"center"} wrap="wrap" gap={'xs'} mb={'lg'}>
                     {cardList}
                 </Flex>
+
+                <Button onClick={props.ReturnCallback}>Return</Button>
             </Flex>
 
-            <Button onClick={props.ReturnCallback}>Return</Button>
+            
         </>
     )
 }

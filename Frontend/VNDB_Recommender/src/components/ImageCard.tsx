@@ -59,7 +59,7 @@ export default function ImageCard({ image, title, description, languages, platfo
         </Card.Section>
 
         <Group position="apart" mt="xl">
-          <Text fz="sm" fw={700} className={classes.title}>
+          <Text fz="sm" fw={700} className={classes.title} lineClamp={1}>
             {title}
           </Text>
         </Group>
@@ -69,21 +69,21 @@ export default function ImageCard({ image, title, description, languages, platfo
 
         <Card.Section withBorder className='classes.section'>
           <Group mt="xs" mb="xs" ml="lg">
-            <Text fz="sm" fw={400}>
+            <Text fz="xs" fw={400} truncate='end'>
               Languages: {langs}
             </Text>
           </Group>
         </Card.Section>
         <Card.Section withBorder className='classes.section'>
           <Group mt="xs" mb="xs" ml="lg">
-            <Text fz="sm" fw={400}>
+            <Text fz="xs" fw={400} truncate='end'>
               Platforms: {plats}
             </Text>
           </Group>
         </Card.Section>
         <Card.Section withBorder className='classes.section'>
           <Group mt="xs" mb="xs" ml="lg">
-            <Text fz="sm" fw={400}>
+            <Text fz="xs" fw={400}>
               Average Play Time: {length}
             </Text>
           </Group>
