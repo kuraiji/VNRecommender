@@ -8,14 +8,23 @@ import uvicorn
 # Website hosted with AWS Lightsail or EC2
 
 # TODO:
-# Have Java server handle user account creations and fetching
-# Complete minimum react frontend UI
-# Configure security and authentication
-# Upload to a server and have publicly accessible
-# ----------
+# Must Do:
+# Frontend:
+# Connect to the AWS Services
+# Finish the Search Page
+# Host on Free Service: https://gist.github.com/picwellwisher12pk/80bc71b7719b2c06115b84c052ffd6b7
+#
+# Backend:
+# Use Amazon DynamoDB for storing User Data
+# Use AWS Lambda for Python and Java Backend
+# Have Firebase Auth send newly created accounts to DynamoDB
+# Create Lambdas for every Python function
+# Create Lambdas for every Java function
+#
+# Nice to Have Features:
+# Make it mobile friendly
 # Handle blacklist VNs
 # Handle AI algorithm auto refreshing
-# Complete full react frontend UI - delete account
 
 DB_LOCATION = "../../fetched.db"
 
