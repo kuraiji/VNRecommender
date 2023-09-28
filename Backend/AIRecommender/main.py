@@ -15,9 +15,7 @@ import uvicorn
 # Host on Free Service: https://gist.github.com/picwellwisher12pk/80bc71b7719b2c06115b84c052ffd6b7
 #
 # Backend:
-# Use Amazon DynamoDB for storing User Data
 # Use AWS Lambda for Python and Java Backend
-# Have Firebase Auth send newly created accounts to DynamoDB
 # Create Lambdas for every Python function
 # Create Lambdas for every Java function
 #

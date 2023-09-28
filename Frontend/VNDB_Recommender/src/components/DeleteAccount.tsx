@@ -1,7 +1,8 @@
 import { Button, Collapse, Flex, PasswordInput, Text, Title } from "@mantine/core";
 import { useState } from "react";
-import { FirebaseError, auth } from "../api/firebase";
+import { FirebaseError, auth, database } from "../api/firebase";
 import { AuthErrorCodes, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
+import { ref, set } from 'firebase/database';
 
 interface DeleteAccountProps {
     OpenBlur: () => void,
@@ -20,9 +21,12 @@ export default function DeleteAccount(props: DeleteAccountProps) {
         const user = auth.currentUser;
         if(user === null || user.email === null) return;
         try {
+            const uid = user.uid;
             await reauthenticateWithCredential(user,
                 EmailAuthProvider.credential(user.email, password));
             user.delete();
+            await set(ref(database, 'users/' + uid), {
+            });
         } catch (error) {
             const firebaseError = error as FirebaseError;
             console.log(error)
@@ -32,6 +36,9 @@ export default function DeleteAccount(props: DeleteAccountProps) {
                     break;
                 case "auth/missing-password":
                     setPassError("Missing Password");
+                    break;
+                case AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER:
+                    setPassError("Too Many Attempts")
                     break;
             }
             props.CloseBlur();

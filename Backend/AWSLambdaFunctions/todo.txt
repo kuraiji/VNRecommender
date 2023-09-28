@@ -1,9 +1,4 @@
-Database Structure:
-UID, Firebase ID, Blacklisted VNs
-
 Java Functions:
-Add User to DB
-Delete User from DB
 Generate Recommended VNs
 Add Blacklist VN (Unimportant Right Now)
 

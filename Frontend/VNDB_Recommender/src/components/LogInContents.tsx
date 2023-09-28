@@ -77,6 +77,9 @@ function LogInContents(props: LogInContentsProps) {
                 case AuthErrorCodes.USER_DELETED:
                     setEmailError("Account doesn't exist");
                     break;
+                case AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER:
+                    setEmailError("Too Many Attempts");
+                    break;
             }
             close();
             return;

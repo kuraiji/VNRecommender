@@ -3,9 +3,10 @@ import { useForm } from '@mantine/form'
 import SignUpPassword from './SignUpPassword';
 import { useState } from 'react';
 import { AuthErrorCodes, UserCredential, createUserWithEmailAndPassword, sendEmailVerification, signOut } from "firebase/auth"
-import { FirebaseError, auth } from '../api/firebase';
+import { FirebaseError, auth, database } from '../api/firebase';
 import { useDisclosure } from '@mantine/hooks';
 import { NotificationRef } from './Notification';
+import { ref, set } from 'firebase/database';
 
 export interface SignUpContentsProps {
     CloseCallback: ()=>void,
@@ -39,6 +40,9 @@ function SignUpContents(props : SignUpContentsProps) {
         try {
             userCredential = await createUserWithEmailAndPassword(auth, form.getInputProps('email').value, 
                 form.getInputProps('confirm_password').value);
+            await set(ref(database, 'users/' + userCredential.user.uid), {
+                blacklistedVNs: [""]
+            });
         } catch (error) {
             const firebaseError = error as FirebaseError;
             switch(firebaseError.code) {
