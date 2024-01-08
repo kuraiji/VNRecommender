@@ -1,6 +1,7 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
 import NotificationBase from "./NotificationBase";
 import { Portal, keyframes, createStyles } from "@mantine/core";
+import { IsMobile } from "../api/main";
 
 interface NotificationProps {
     header: string,
@@ -17,6 +18,12 @@ const slide = keyframes({
     'to': {right:"2rem"}
 })
 
+const slideMobile = keyframes({
+    'from': {right: "-23rem"},
+    '75%': {right: "5rem"},
+    'to': {right:"15rem"}
+})
+
 const useStyles = createStyles(() => ({
     portal: {
         position: "fixed", 
@@ -31,16 +38,21 @@ const useStyles = createStyles(() => ({
     },
     hide: {
         display:"none"
+    },
+    portalMobileAnimation:{
+        animation: `${slideMobile} 1s ease-in-out`,
+        animationFillMode: "forwards"
     }
 }))
 
 const Notification = forwardRef(function Notification(props: NotificationProps, ref: React.ForwardedRef<NotificationRef | undefined> ) {
     const { classes } = useStyles();
     const [animClass, setAnimClass] = useState("");
+    const isMobile = IsMobile();
 
     useImperativeHandle(ref, () => ({
         play() {
-            setAnimClass(classes.portalAnimation);
+            setAnimClass(isMobile ? classes.portalMobileAnimation : classes.portalAnimation);
         }
     }));
 

@@ -1,4 +1,5 @@
 import { createStyles, Card, Image, Text, Group, rem, UnstyledButton } from '@mantine/core';
+import { IsMobile } from '../api/main';
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -44,6 +45,8 @@ function Open_VNDB(id: string){
 export default function ImageCard({ image, title, description, languages, platforms, length, id }: ImageCardProps) {
   const { classes } = useStyles();
 
+  const isMobile = IsMobile();
+
   const langs = languages.map((language) => (
       <Text component="span" size="xs" mr={5} color="dimmed">
         {language}
@@ -58,9 +61,9 @@ export default function ImageCard({ image, title, description, languages, platfo
 
   return (
     <UnstyledButton onClick={()=>{Open_VNDB(id)}}>
-      <Card withBorder padding="lg" className={classes.card}>
+      <Card withBorder padding="lg" className={classes.card} style={{width: isMobile ? "80vw" : "18vw"}}>
         <Card.Section>
-          <Image mt={"lg"} src={image} alt={title} height={200} fit='cover'/>
+          <Image mt={"lg"} src={image} alt={title} height={IsMobile() ? "45vh" : "20vw"} fit='cover'/>
         </Card.Section>
 
         <Group position="apart" mt="xl">

@@ -1,5 +1,6 @@
 import { Notification } from '@mantine/core';
 import { IconCheck } from '@tabler/icons-react';
+import { IsMobile } from '../api/main';
 
 interface NotificationBaseProps {
     CloseCallback: ()=>void,
@@ -8,6 +9,9 @@ interface NotificationBaseProps {
 }
 
 export default function NotificationBase(props: NotificationBaseProps) {
+
+    const isMobile = IsMobile();
+
     return(
         <>
             <Notification
@@ -16,6 +20,7 @@ export default function NotificationBase(props: NotificationBaseProps) {
                 radius="lg" 
                 title={props.Header}
                 onClose={props.CloseCallback}
+                style={{width: isMobile ? "75vw" : "auto"}}
             >
                 {props.Body}
             </Notification>

@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Loader, LoadingOverlay } from "@mantine/core"
-import { GetRecommendations, GetRecommendationsProps } from "../api/main"
+import { GetRecommendations, GetRecommendationsProps, IsMobile } from "../api/main"
 import { useEffect, useState } from "react"
 import ImageCard from "../components/ImageCard";
 
@@ -38,7 +38,9 @@ export default function Search(props: SearchProps) {
     const[vnData, setVnData] = useState<Array<{title: string, description: string, image: string, languages: Array<string>, 
                                                platforms: Array<string>, length_minutes: number, id: string}>>();
                                                
-    const[showLoading, setShowLoading] = useState(true);                      
+    const[showLoading, setShowLoading] = useState(true);
+    
+    const isMobile = IsMobile();
 
     useEffect(()=>{
         GetRecommendations(props.req).then((results: Array<{vnid: number, rating: number}> | undefined)=>{
@@ -60,7 +62,7 @@ export default function Search(props: SearchProps) {
     return(
         <>
             <Flex justify={"center"} align={"center"}>
-                <h2>Recommendations for User #{props.req.userid}:</h2>
+                <h2 style={{textAlign: "center"}}>Recommendations for User #{props.req.userid}:</h2>
             </Flex>
             
             {showLoading 
@@ -70,7 +72,7 @@ export default function Search(props: SearchProps) {
             </Flex>
             :
             <Flex justify={"center"} direction={"column"} align={"center"} mb={'lg'}>
-                    <Flex justify={"center"} direction={"row"} 
+                    <Flex justify={"center"} direction={isMobile ? "column" : "row"} 
                     align={"center"} wrap="wrap" gap={'xs'} mb={'lg'}
                     >
                         {vnData?.map((element) => 

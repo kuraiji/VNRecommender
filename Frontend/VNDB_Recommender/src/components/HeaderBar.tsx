@@ -7,6 +7,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../api/firebase";
 import UserMenu from "./UserMenu";
 import Notification, { NotificationRef } from "./Notification";
+import { IsMobile } from "../api/main";
 
 interface HeaderBarProps {
     ReturnToHomepage: () => void
@@ -32,6 +33,7 @@ export default function HeaderBar(props: HeaderBarProps) {
     const signRef = useRef<NotificationRef>();
     const logRef = useRef<NotificationRef>();
     const [loggedIn, setLoggedIn] = useState(false);
+    const isMobile = IsMobile();
 
     onAuthStateChanged(auth, (user)=>{
         if(!loggedIn && user && user.emailVerified) {
@@ -54,7 +56,7 @@ export default function HeaderBar(props: HeaderBarProps) {
                         Visual Novel Recommender
                     </Text>
                 </UnstyledButton>
-                <Group sx={{display: loggedIn ? "none" : "visible"}}>
+                <Group w={isMobile ? "75vw" : "auto"} sx={{display: loggedIn ? "none" : "visible"}}>
                     <ModalBase Contents={LogInContents} ButtonText="Log in" ButtonVariant="default"
                         OptionalCallback={logRef}
                     />

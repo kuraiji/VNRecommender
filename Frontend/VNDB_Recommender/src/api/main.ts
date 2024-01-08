@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 const API_URL = "http://localhost:8000/recommend?";
 
 export interface GetRecommendationsProps {
@@ -19,4 +21,21 @@ export async function GetRecommendations(props: GetRecommendationsProps) : Promi
         converted.push({vnid: element[0], rating: element[1]});
     });
     return converted;
+}
+
+export function IsMobile() {
+    const [isMobile, setIsMobile] = useState(window.innerWidth);
+
+    const handleWindowSizeChange = () => {
+        setIsMobile(window.innerWidth);
+    }
+
+    useEffect(() => {
+        window.addEventListener('resize', handleWindowSizeChange);
+        return () => {
+            window.removeEventListener('resize', handleWindowSizeChange);
+        }
+    }, []);
+
+    return isMobile <= 768;
 }
