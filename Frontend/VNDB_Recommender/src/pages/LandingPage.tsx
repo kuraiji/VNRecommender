@@ -66,6 +66,7 @@ function LandingPage(props: LandingPageProps) {
                     value={searchValue}
                     placeholder={placeholderValue}
                     error={errorValue}
+                    onClick={()=>{OnStart(searchValue, lanFilters, platFilters, OnError, OnUnerror, props.onSearch)}}
                 />
                 <Button 
                     onClick={()=>{OnStart(searchValue, lanFilters, platFilters, OnError, OnUnerror, props.onSearch)}}

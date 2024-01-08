@@ -1,4 +1,4 @@
-import { Group, Header, Text, createStyles, rem, Center } from "@mantine/core";
+import { Group, Header, Text, createStyles, rem, Center, UnstyledButton } from "@mantine/core";
 import ModalBase from "./ModalBase";
 import SignUpContents from "./SignUpContents";
 import LogInContents from "./LogInContents";
@@ -7,6 +7,10 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../api/firebase";
 import UserMenu from "./UserMenu";
 import Notification, { NotificationRef } from "./Notification";
+
+interface HeaderBarProps {
+    ReturnToHomepage: () => void
+}
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -22,7 +26,7 @@ const useStyles = createStyles((theme) => ({
     }
 }))
 
-export default function HeaderBar() {
+export default function HeaderBar(props: HeaderBarProps) {
 
     const { classes } = useStyles();
     const signRef = useRef<NotificationRef>();
@@ -40,14 +44,16 @@ export default function HeaderBar() {
     return (
         <Header height={56} className={classes.header} mb={120} w="100vw">
             <div className={classes.inner}>
-                <Text 
-                    variant="gradient" 
-                    gradient={{from: 'aqua', to: 'aquamarine', deg: 49}}
-                    fz="xl"
-                    fw="bold"
-                >
-                    Visual Novel Recommender
-                </Text>
+                <UnstyledButton onClick={props.ReturnToHomepage}>
+                    <Text 
+                        variant="gradient" 
+                        gradient={{from: 'aqua', to: 'aquamarine', deg: 49}}
+                        fz="xl"
+                        fw="bold"
+                    >
+                        Visual Novel Recommender
+                    </Text>
+                </UnstyledButton>
                 <Group sx={{display: loggedIn ? "none" : "visible"}}>
                     <ModalBase Contents={LogInContents} ButtonText="Log in" ButtonVariant="default"
                         OptionalCallback={logRef}

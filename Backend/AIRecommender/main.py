@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
 import sqlite3
 import ai
 import uvicorn
@@ -28,14 +29,31 @@ DB_LOCATION = "../../fetched.db"
 
 app = FastAPI()
 
+origins = [
+    'http://localhost',
+    'http://localhost:5173'
+]
+
+app.add_middleware(CORSMiddleware,
+                   allow_origins=origins,
+                   allow_credentials=True,
+                   allow_methods=["*"],
+                   allow_headers=["*"],
+                   )
 
 @app.get("/recommend/")
 async def recommend(userid: int,
                     language_filters: list[str] = Query(None),
                     platform_filters: list[str] = Query(None)) -> list[tuple]:
+    if len(language_filters) == 1 and not language_filters[0]:
+        language_filters = None
+    if len(platform_filters) == 1 and not platform_filters[0]:
+        platform_filters = None
+
     database = sqlite3.connect(DB_LOCATION)
     result = ai.recommend(database, userid, language_filters, platform_filters)
     database.close()
+    print(result)
     return result
 
 

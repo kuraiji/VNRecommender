@@ -27,10 +27,12 @@ def recommend(db: sqlite3.Connection, user_id: int,
         "SELECT * FROM VisualNovels LEFT JOIN VisualNovelLanguages ON VisualNovels.VNID=VisualNovelLanguages.VNID "
         "LEFT JOIN VisualNovelPlatforms ON VisualNovels.VNID=VisualNovelPlatforms.VNID", db)
     filtered_list_of_vns = list_of_vns
-    if platform_filters is not None:
+
+    if platform_filters is not None and len(platform_filters) > 0:
         filtered_list_of_vns = filtered_list_of_vns[filtered_list_of_vns["Platform"].isin(platform_filters)]
-    if language_filters is not None:
+    if language_filters is not None and len(language_filters) > 0:
         filtered_list_of_vns = filtered_list_of_vns[filtered_list_of_vns["Language"].isin(language_filters)]
+    print(filtered_list_of_vns)
     filtered_list_of_vns = filtered_list_of_vns.iloc[:, 0].drop_duplicates()
     dictionary = dict()
 
@@ -48,7 +50,7 @@ def recommend(db: sqlite3.Connection, user_id: int,
 
 if __name__ == "__main__":
     database = sqlite3.connect(DB_LOCATION)
-    model = train(database)
-    results = recommend(database, 2, ["ja"], ["win"])
-    print(results)
+    #model = train(database)
+    #results = recommend(database, 2, ["ja"], ["win"])
+    #print(results)
     database.close()

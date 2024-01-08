@@ -21,7 +21,7 @@ function App() {
     <MantineProvider withGlobalStyles withNormalizeCSS
       theme={{colorScheme: 'dark'}}
     >
-      <HeaderBar/>
+      <HeaderBar ReturnToHomepage={()=>{setSearch(undefined)}}/>
       {typeof search === "undefined" ? 
       <LandingPage onSearch={setSearch}/> : 
       <Search ReturnCallback={()=>{setSearch(undefined)}}

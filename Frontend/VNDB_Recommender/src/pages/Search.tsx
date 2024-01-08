@@ -1,4 +1,4 @@
-import { Button, Flex } from "@mantine/core"
+import { Box, Button, Flex, Loader, LoadingOverlay } from "@mantine/core"
 import { GetRecommendations, GetRecommendationsProps } from "../api/main"
 import { useEffect, useState } from "react"
 import ImageCard from "../components/ImageCard";
@@ -34,58 +34,71 @@ function BuildBody(ids: Array<{vnid: number, rating: number}> | undefined){
 }
 
 export default function Search(props: SearchProps) {
-    const [results, setResults] = useState<Array<{vnid: number, rating: number}>>();
 
     const[vnData, setVnData] = useState<Array<{title: string, description: string, image: string, languages: Array<string>, 
                                                platforms: Array<string>, length_minutes: number, id: string}>>();
-                            
-    const[callBody, setCallBody] = useState('')
-
-    const cardList = vnData?.map(result => <ImageCard
-                                            title={result.title}
-                                            description={result.description}
-                                            image={result.image.url}
-                                            languages={result.languages}
-                                            platforms={result.platforms}
-                                            length={MinutesToHours(result.length_minutes)}
-                                            id={result.id}/>)
-
-    const test = '{"filters":["or",["id","=","v2002"],["id","=","v2003"],["id","=","v4"],["id","=","v23"],["id","=","v454"],["id","=","v666"],["id","=","v420"],["id","=","v69"]],"fields":"title, image.url, description, languages, platforms, length_minutes"}'                                        
+                                               
+    const[showLoading, setShowLoading] = useState(true);                      
 
     useEffect(()=>{
-        GetRecommendations(props.req).then((results)=>{
-            setResults(results);
-        })
-    },[props.req, setResults]);
-
-    useEffect(()=>{
-        setCallBody(BuildBody(results))
-    },[results])
-
-    useEffect(()=>{
-        fetch('https://api.vndb.org/kana/vn', {
+        GetRecommendations(props.req).then((results: Array<{vnid: number, rating: number}> | undefined)=>{
+            fetch('https://api.vndb.org/kana/vn', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: callBody
+            body: BuildBody(results)
+            })
+            .then(response => response.json())
+            .then(response => {
+                setVnData(response.results)
+                setShowLoading(false)
+            })
         })
-        .then(response => response.json())
-        .then(response => setVnData(response.results))
-    }, [callBody])
+    },[props.req]);
 
     return(
         <>
+            <Flex justify={"center"} align={"center"}>
+                <h2>Recommendations for User #{props.req.userid}:</h2>
+            </Flex>
+            
+            {showLoading 
+            ? 
+            <Flex justify={"center"} align={"center"} mb={"xl"}>
+                <Loader color="cyan" size="xl" variant="bars"/>
+            </Flex>
+            :
             <Flex justify={"center"} direction={"column"} align={"center"} mb={'lg'}>
-                <h2>Recommendations for user {props.req.userid}:</h2>
-                <Flex justify={"center"} direction={"row"} align={"center"} wrap="wrap" gap={'xs'} mb={'lg'}>
-                    {cardList}
+                    <Flex justify={"center"} direction={"row"} 
+                    align={"center"} wrap="wrap" gap={'xs'} mb={'lg'}
+                    >
+                        {vnData?.map((element) => 
+                            <li key={element.id} style={{listStyleType: "none"}}>
+                                <ImageCard
+                                title={element.title}
+                                description={element.description}
+                                image={element.image.url}
+                                languages={element.languages}
+                                platforms={element.platforms}
+                                length={MinutesToHours(element.length_minutes)}
+                                id={element.id}/>
+                            </li>
+                        )}
+                    </Flex>
                 </Flex>
-
+             }
+            
+            <Flex justify={"center"} align={"center"} mb={"md"}>
                 <Button onClick={props.ReturnCallback}>Return</Button>
             </Flex>
-
-            
         </>
     )
 }
+
+/*
+<LoadingOverlay visible={showLoading} 
+                zIndex={1000} overlayBlur={0} radius={"xl"} 
+                loaderProps={{color: "cyan", variant: "bars"}}
+                />
+*/

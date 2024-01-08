@@ -6,6 +6,7 @@ interface FloatingLabelProps {
     error: string,
     value: string,
     setValue: (val: string | React.ChangeEvent<any> | null | undefined) => void
+    onClick: () => void
 }
 
 const useStyles = createStyles((theme, {floating}: {floating: boolean}) => ({
@@ -44,6 +45,12 @@ export default function FloatingLabel(props: FloatingLabelProps) {
     const [focused, setFocused] = useState(false);
     const { classes } = useStyles({ floating: props.value.trim().length !== 0 || focused });
 
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+        if(e.key === "Enter") {
+            props.onClick();
+        }
+    }
+
     return (
         <TextInput
         label="VNDB User ID"
@@ -56,6 +63,7 @@ export default function FloatingLabel(props: FloatingLabelProps) {
         onBlur={() => setFocused(false)}
         autoComplete="nope"
         error={props.error}
+        onKeyUp={handleKeyPress}
       />
     );
 }

@@ -20,6 +20,11 @@ const useStyles = createStyles((theme) => ({
     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
     lineHeight: 1,
   },
+
+  li: {
+    listStyleType: "none",
+    display: "inline-block"
+  },
 }));
 
 interface ImageCardProps {
@@ -55,7 +60,7 @@ export default function ImageCard({ image, title, description, languages, platfo
     <UnstyledButton onClick={()=>{Open_VNDB(id)}}>
       <Card withBorder padding="lg" className={classes.card}>
         <Card.Section>
-          <Image mt={"lg"} src={image} alt={title} height={250} fit='contain'/>
+          <Image mt={"lg"} src={image} alt={title} height={200} fit='cover'/>
         </Card.Section>
 
         <Group position="apart" mt="xl">
@@ -63,21 +68,28 @@ export default function ImageCard({ image, title, description, languages, platfo
             {title}
           </Text>
         </Group>
+        {description 
+        ? 
         <Text mt="sm" mb="xs" c="dimmed" fz="xs" lineClamp={4}>
           {description}
-        </Text>
+        </Text> 
+        : 
+        <>
+        <br />&nbsp;<br />&nbsp;<br />&nbsp;<br />&nbsp;<br />
+        </>
+        }
 
         <Card.Section withBorder className='classes.section'>
           <Group mt="xs" mb="xs" ml="lg">
             <Text fz="xs" fw={400} truncate='end'>
-              Languages: {langs}
+              Languages: {langs.map((element, index) => <li className={classes.li} key={index} >{element}</li>)}
             </Text>
           </Group>
         </Card.Section>
         <Card.Section withBorder className='classes.section'>
           <Group mt="xs" mb="xs" ml="lg">
             <Text fz="xs" fw={400} truncate='end'>
-              Platforms: {plats}
+              Platforms: {plats.map((element, index) => <li className={classes.li} key={index}>{element}</li>)}
             </Text>
           </Group>
         </Card.Section>
